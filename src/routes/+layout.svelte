@@ -47,7 +47,7 @@
 	<title>MILES 158 — Car Service Brand · Nagoya</title>
 	<meta
 		name="description"
-		content="MILES 158 — 名古屋・西区に生まれた車好きのためのサービスプレイス。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンス。"
+		content="MILES 158 — 名古屋・西区に生まれた車好きのためのカーラウンジ。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンス。"
 	/>
 	<link
 		rel="preload"

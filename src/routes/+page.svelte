@@ -68,19 +68,15 @@
 	}
 
 	.car-image {
-		aspect-ratio: 16 / 10;
-		background: rgba(0, 10, 38, 0.05);
+		aspect-ratio: 1 / 1;
 		border-radius: 4px;
 		overflow: hidden;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 	}
 
 	.car-image img {
 		width: 100%;
 		height: 100%;
-		object-fit: contain;
+		object-fit: cover;
 	}
 
 	.car-meta h3 {

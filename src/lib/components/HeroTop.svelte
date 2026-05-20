@@ -1,22 +1,71 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { hero } from '$lib/data/content';
 	import LogoMain from './LogoMain.svelte';
+
+	let curtainEl = $state<HTMLElement | null>(null);
+	let bgEl = $state<HTMLElement | null>(null);
+	let headerEl = $state<HTMLElement | null>(null);
+	let bottomEl = $state<HTMLElement | null>(null);
+
+	onMount(() => {
+		if (!curtainEl || !bgEl || !headerEl || !bottomEl) return () => {};
+
+		let cleanup: (() => void) | null = null;
+
+		(async () => {
+			const { gsap } = await import('gsap');
+
+			// Initial: white curtain covers everything, bg is slightly over-scaled
+			// (Apple-style subtle "Ken Burns" zoom-out reveal), content invisible
+			gsap.set(curtainEl, { yPercent: 0 });
+			gsap.set(bgEl, { scale: 1.08, opacity: 0, filter: 'blur(6px)' });
+			gsap.set([headerEl, bottomEl], { opacity: 0, y: 28 });
+
+			const tl = gsap.timeline({ delay: 0.2 });
+
+			// 1) Curtain slides upward with expo easing — feels like a stage curtain
+			tl.to(curtainEl, { yPercent: -100, duration: 1.4, ease: 'expo.inOut' });
+
+			// 2) Bg image fades in beneath the curtain, then settles from a soft
+			//    blurred over-scale to neutral over a longer ease — quietly cinematic
+			tl.to(bgEl, { opacity: 1, duration: 0.9, ease: 'power2.out' }, '<0.15');
+			tl.to(
+				bgEl,
+				{ scale: 1, filter: 'blur(0px)', duration: 2.2, ease: 'power3.out' },
+				'<'
+			);
+
+			// 3) Header + bottom rise into place with gentle stagger
+			tl.to(
+				[headerEl, bottomEl],
+				{ opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', stagger: 0.18 },
+				'-=1.4'
+			);
+
+			cleanup = () => tl.kill();
+		})();
+
+		return () => cleanup?.();
+	});
 </script>
 
 <section class="hero" data-dark-section>
-	<div class="hero-bg">
+	<div class="hero-curtain" bind:this={curtainEl}></div>
+
+	<div class="hero-bg" bind:this={bgEl}>
 		<img src={hero.bgImage} alt="" loading="eager" />
 	</div>
 	<div class="hero-gradient"></div>
 
-	<header class="hero-header container">
+	<header class="hero-header container" bind:this={headerEl}>
 		<h1 class="hero-brand">
 			<LogoMain width="100%" title={hero.brand} />
 		</h1>
 		<p class="hero-services" lang="ja">{hero.services}</p>
 	</header>
 
-	<div class="hero-bottom container">
+	<div class="hero-bottom container" bind:this={bottomEl}>
 		<h2 class="hero-bigtitle">
 			{#each hero.bigTitle as line, i (i)}
 				<span class="line">{line}</span>
@@ -45,10 +94,19 @@
 		padding: clamp(40px, 8vh, 96px) 0 clamp(40px, 8vh, 72px) 0;
 	}
 
+	.hero-curtain {
+		position: absolute;
+		inset: 0;
+		background: #ffffff;
+		z-index: 10;
+		pointer-events: none;
+	}
+
 	.hero-bg {
 		position: absolute;
 		inset: 0;
 		z-index: 0;
+		will-change: opacity;
 	}
 
 	.hero-bg img {
@@ -79,24 +137,24 @@
 
 	.hero-brand {
 		display: block;
-		width: clamp(280px, 60vw, 540px);
+		width: clamp(220px, 36vw, 380px);
 		margin: 0 0 18px 0;
 		color: #ffffff;
 		line-height: 0;
 	}
 
 	.hero-services {
-		font-size: clamp(10px, 0.9vw, 12px);
+		font-size: var(--fs-h6);
 		opacity: 0.92;
 		margin: 0;
 		color: #e8f4f8;
 	}
 
 	.hero-bigtitle {
-		font-size: clamp(2.4rem, 6vw, 4.5rem);
+		font-size: var(--fs-h1);
 		font-weight: 400;
-		line-height: 1.0;
-		margin: 0 0 1rem 0;
+		line-height: 1;
+		margin: 0 0 var(--space-4) 0;
 		text-transform: uppercase;
 	}
 
@@ -105,7 +163,7 @@
 	}
 
 	.hero-lead {
-		font-size: clamp(13px, 1vw, 16px);
+		font-size: var(--fs-h5);
 		line-height: 1.75;
 		margin: 0 0 2rem 0;
 		opacity: 0.95;
@@ -114,9 +172,5 @@
 
 	.hero-lead .line-ja {
 		display: inline;
-	}
-
-	.hero-cta {
-		display: none;
 	}
 </style>

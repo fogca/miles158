@@ -11,7 +11,7 @@
 	<div class="About__inner">
 		<section class="About__block About__intro section">
 			<h1 class="About__lead" lang="ja">
-				MILES 158 は、名古屋・西区に生まれた車好きのためのサービスプレイス。
+				MILES 158 は、名古屋・西区に生まれた車好きのためのカーラウンジ。
 			</h1>
 			<div class="About__body" lang="ja">
 				<p>
@@ -114,7 +114,7 @@
 	}
 
 	.About__logo {
-		max-width: 540px;
+		max-width: 360px;
 		margin: 0 auto;
 		padding-block: var(--space-9);
 		color: var(--c-navy);

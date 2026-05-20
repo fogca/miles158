@@ -27,7 +27,27 @@
 			]);
 			gsap.registerPlugin(ScrollTrigger);
 
-			const trigger = ScrollTrigger.create({
+			// Entry: clip-path reveals from bottom → top while the previous
+			// section (.cpara) is scrolling out. Keyed off the prev section's
+			// bottom so there is no gap between Vis2 and the slider.
+			gsap.set(stageEl!, { clipPath: 'inset(100% 0 0 0)' });
+			const prevSection = document.querySelector<HTMLElement>('.cpara');
+			const entryTrigger = prevSection
+				? ScrollTrigger.create({
+						trigger: prevSection,
+						start: 'bottom bottom',
+						end: 'bottom top',
+						scrub: true,
+						onUpdate: (self) => {
+							gsap.set(stageEl!, {
+								clipPath: `inset(${(1 - self.progress) * 100}% 0 0 0)`
+							});
+						}
+					})
+				: null;
+
+			// Pin: slide-driven activeIndex update
+			const pinTrigger = ScrollTrigger.create({
 				trigger: containerEl!,
 				start: 'top top',
 				end: () => `+=${(slides.length - 1) * window.innerHeight}`,
@@ -45,7 +65,10 @@
 				}
 			});
 
-			cleanup = () => trigger.kill();
+			cleanup = () => {
+				entryTrigger?.kill();
+				pinTrigger.kill();
+			};
 		})();
 
 		return () => cleanup?.();
@@ -223,8 +246,16 @@
 		white-space: nowrap;
 	}
 
-	@media (max-width: 640px) {
+	@media (max-width: 767px) {
+		.content {
+			justify-content: flex-end;
+			padding-bottom: 86px;
+		}
+		.desc {
+			font-size: 10.5px;
+		}
 		.nav {
+			bottom: 30px;
 			gap: var(--space-3);
 		}
 		.nav .bar {

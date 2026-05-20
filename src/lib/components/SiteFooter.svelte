@@ -50,7 +50,7 @@
 
 		<div class="SiteFooter__group">
 			<p class="SiteFooter__label">Visit Us</p>
-			<a href="/reserve" class="btn-outline btn-outline--lg" lang="ja">来店予約</a>
+			<a href="/reserve" class="btn-outline btn-outline--sm" lang="ja">来店予約</a>
 		</div>
 
 		<div class="SiteFooter__logo" aria-hidden="true">
@@ -96,7 +96,7 @@
 	}
 
 	.SiteFooter__nav a {
-		font-size: var(--fs-h2);
+		font-size: var(--fs-h3);
 		text-decoration: none;
 		transition: opacity 0.2s ease;
 	}
@@ -123,7 +123,7 @@
 
 	.SiteFooter__logo {
 		width: 50%;
-		max-width: 540px;
+		max-width: 320px;
 	}
 
 	.SiteFooter__logo :global(svg) {
