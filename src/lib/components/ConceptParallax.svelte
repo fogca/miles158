@@ -3,22 +3,18 @@
 	import { conceptParallax } from '$lib/data/content';
 
 	// Pinned section — single ScrollTrigger spanning:
-	//   Vis1 (image1 rises + grows)
-	//   → Vis2 (image2 clip-path reveals + text/CTA fade in)
+	//   Texts fade in / out → Vis1 (image1 rises + grows; title + CTA fade in on top)
 	// The handoff into StorySlider is performed by StorySlider's own entry
-	// trigger, which is keyed off THIS section's bottom — so there is no gap
-	// and no extra image layer required.
+	// trigger, which is keyed off THIS section's bottom — so there is no gap.
 
 	let containerEl = $state<HTMLElement | null>(null);
 	let textEls = $state<HTMLElement[]>([]);
 	let image1El = $state<HTMLElement | null>(null);
-	let image2El = $state<HTMLElement | null>(null);
 	let titleEl = $state<HTMLElement | null>(null);
 	let ctaEl = $state<HTMLElement | null>(null);
 	let isImagePhase = $state(false);
 
 	const texts = conceptParallax.texts;
-	const vis2Image = conceptParallax.vis2Image;
 
 	onMount(() => {
 		if (!containerEl) return () => {};
@@ -45,10 +41,6 @@
 				opacity: 0,
 				transformOrigin: 'bottom center'
 			});
-			gsap.set(image2El, {
-				clipPath: 'inset(100% 0 0 0)',
-				transformOrigin: 'bottom center'
-			});
 			gsap.set([titleEl, ctaEl], { opacity: 0, y: 30 });
 
 			const tl = gsap.timeline({
@@ -56,15 +48,15 @@
 					trigger: containerEl!,
 					scroller,
 					start: 'top top',
-					end: '+=' + (texts.length + 5) * 100 + '%',
+					end: '+=' + (texts.length + 4) * 100 + '%',
 					pin: true,
 					scrub: 1,
 					anticipatePin: 1,
 					invalidateOnRefresh: true,
 					onUpdate: (self) => {
-						// Texts occupy roughly the first 55% of the pin; switch
-						// the header to "light on dark" mode once we're past them.
-						const next = self.progress > 0.55;
+						// Texts occupy roughly the first 60% of the pin; switch
+						// the header to "light on dark" mode once Vis1 is on screen.
+						const next = self.progress > 0.6;
 						if (next !== isImagePhase) isImagePhase = next;
 					}
 				}
@@ -84,15 +76,11 @@
 				'-=0.15'
 			);
 
-			// 3) Vis1 → Vis2: image-1 scales up, image-2 clip-path reveals
-			tl.to(image1El, { scale: 1.18, duration: 1.0, ease: 'none' });
-			tl.to(image2El, { clipPath: 'inset(0% 0 0 0)', duration: 1.0, ease: 'none' }, '<');
-
-			// 4) Vis2 content fades in (title + CTA)
+			// 3) Title + CTA fade in over Vis1
 			tl.to(titleEl, { opacity: 1, y: 0, duration: 0.6 }, '+=0.3');
 			tl.to(ctaEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
 
-			// 5) Hold while Vis2 is on screen. Pin then releases — StorySlider's
+			// 4) Hold while Vis1 is on screen. Pin then releases — StorySlider's
 			//    own entry trigger (keyed off this section's bottom) takes over.
 			tl.to({}, { duration: 0.6 });
 
@@ -117,11 +105,7 @@
 
 		<div class="layer layer-1" bind:this={image1El}>
 			<img src={conceptParallax.image} alt="" loading="lazy" />
-		</div>
-
-		<div class="layer layer-2" bind:this={image2El}>
-			<img src={vis2Image} alt="" loading="lazy" />
-			<div class="layer-2__overlay"></div>
+			<div class="layer-1__overlay"></div>
 		</div>
 
 		<div class="cta">
@@ -200,11 +184,7 @@
 		z-index: 1;
 	}
 
-	.layer-2 {
-		z-index: 2;
-	}
-
-	.layer-2__overlay {
+	.layer-1__overlay {
 		position: absolute;
 		inset: 0;
 		background: linear-gradient(180deg, rgba(0, 10, 38, 0.2) 0%, rgba(0, 10, 38, 0.55) 100%);

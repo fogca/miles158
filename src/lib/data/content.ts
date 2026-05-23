@@ -50,9 +50,8 @@ export const conceptParallax = {
 		'マイルズ158は<br class="sp-br">名古屋西区の国道158号線沿いに誕生した<br class="sp-br">車好きのためのカーラウンジです。<br class="sp-br"><br class="sp-br">カーレンタル、クラブカフェ、<br class="sp-br">クラブコミュニティ― 車と過ごす時間を<br class="sp-br">豊かに、そして身近にするためのサービスを、<br class="sp-br">ひとつの建物にまとめました。',
 		'さぁ、車と旅にでよう。'
 	],
-	// Vis1: car_02, Vis2 (CTA layer): car_04
-	image: IMG_C,
-	vis2Image: IMG_G
+	// Vis1: car_07 (Vis2 was removed; CTA now layers on top of Vis1)
+	image: '/images/car_07.png'
 };
 
 // Concept Visual — 4 slides
@@ -118,6 +117,7 @@ export const services: Service[] = [
 // Service slides — used by StorySlider
 const serviceSlideImages: Record<string, string> = {
 	rental: '/images/car_05.png',
+	cafe: '/images/car_03.png',
 	community: '/images/car_06.png',
 	cleaning: '/images/cleaning.png'
 };

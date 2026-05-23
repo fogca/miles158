@@ -95,6 +95,31 @@
 		};
 		videoEl.addEventListener('loadedmetadata', onMeta);
 
+		// iOS Safari: video.currentTime scrub via scroll is blocked until the
+		// video has been "started" once. Calling play() then immediately pausing
+		// (allowed on muted + playsinline) unlocks seeking. Also re-paint once
+		// the first frame can decode so the initial state matches scroll progress.
+		const unlock = () => {
+			videoEl
+				?.play()
+				.then(() => videoEl?.pause())
+				.catch(() => {});
+		};
+		const onCanPlay = () => {
+			unlock();
+			update();
+		};
+		videoEl.addEventListener('canplay', onCanPlay, { once: true });
+		// Fallback: any first user gesture also unlocks (covers cases where
+		// canplay races with autoplay-blocked policies).
+		const firstGesture = () => {
+			unlock();
+			window.removeEventListener('touchstart', firstGesture);
+			window.removeEventListener('pointerdown', firstGesture);
+		};
+		window.addEventListener('touchstart', firstGesture, { passive: true, once: true });
+		window.addEventListener('pointerdown', firstGesture, { once: true });
+
 		type LenisLike = {
 			on: (event: string, fn: (...args: unknown[]) => void) => void;
 			off: (event: string, fn: (...args: unknown[]) => void) => void;
@@ -111,6 +136,9 @@
 
 		return () => {
 			videoEl?.removeEventListener('loadedmetadata', onMeta);
+			videoEl?.removeEventListener('canplay', onCanPlay);
+			window.removeEventListener('touchstart', firstGesture);
+			window.removeEventListener('pointerdown', firstGesture);
 			if (lenis) lenis.off('scroll', update);
 			else window.removeEventListener('scroll', update);
 			window.removeEventListener('resize', update);
