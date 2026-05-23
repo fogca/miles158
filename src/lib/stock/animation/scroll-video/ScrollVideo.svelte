@@ -89,6 +89,15 @@
 	onMount(() => {
 		if (!containerEl || !videoEl) return () => {};
 
+		type LenisLike = {
+			on: (event: string, fn: (...args: unknown[]) => void) => void;
+			off: (event: string, fn: (...args: unknown[]) => void) => void;
+		};
+
+		let lenis: LenisLike | null = null;
+		let firstGesture: (() => void) | null = null;
+		let cancelled = false;
+
 		const onMeta = () => {
 			duration = videoEl?.duration ?? 0;
 			update();
@@ -110,35 +119,42 @@
 			update();
 		};
 		videoEl.addEventListener('canplay', onCanPlay, { once: true });
-		// Fallback: any first user gesture also unlocks (covers cases where
-		// canplay races with autoplay-blocked policies).
-		const firstGesture = () => {
+		firstGesture = () => {
 			unlock();
-			window.removeEventListener('touchstart', firstGesture);
-			window.removeEventListener('pointerdown', firstGesture);
+			window.removeEventListener('touchstart', firstGesture!);
+			window.removeEventListener('pointerdown', firstGesture!);
 		};
 		window.addEventListener('touchstart', firstGesture, { passive: true, once: true });
 		window.addEventListener('pointerdown', firstGesture, { once: true });
 
-		type LenisLike = {
-			on: (event: string, fn: (...args: unknown[]) => void) => void;
-			off: (event: string, fn: (...args: unknown[]) => void) => void;
-		};
-		const lenis = (window as Window & { __lenis?: LenisLike }).__lenis;
+		// Wait for layout's scroll bootstrap so we pick the right scroll source.
+		// Without this, on hard reload Lenis is initialised AFTER ScrollVideo
+		// mounts → we fall back to the native scroll listener, which then goes
+		// silent once Lenis intercepts wheel/touch events.
+		(async () => {
+			const ready = (window as Window & { __scrollReady?: Promise<void> }).__scrollReady;
+			if (ready) await ready;
+			if (cancelled) return;
 
-		if (lenis) {
-			lenis.on('scroll', update);
-		} else {
-			window.addEventListener('scroll', update, { passive: true });
-		}
+			lenis = (window as Window & { __lenis?: LenisLike }).__lenis ?? null;
+			if (lenis) {
+				lenis.on('scroll', update);
+			} else {
+				window.addEventListener('scroll', update, { passive: true });
+			}
+			update();
+		})();
+
 		window.addEventListener('resize', update);
-		update();
 
 		return () => {
+			cancelled = true;
 			videoEl?.removeEventListener('loadedmetadata', onMeta);
 			videoEl?.removeEventListener('canplay', onCanPlay);
-			window.removeEventListener('touchstart', firstGesture);
-			window.removeEventListener('pointerdown', firstGesture);
+			if (firstGesture) {
+				window.removeEventListener('touchstart', firstGesture);
+				window.removeEventListener('pointerdown', firstGesture);
+			}
 			if (lenis) lenis.off('scroll', update);
 			else window.removeEventListener('scroll', update);
 			window.removeEventListener('resize', update);

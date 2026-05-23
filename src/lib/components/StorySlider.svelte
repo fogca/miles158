@@ -21,6 +21,11 @@
 		let cleanup: (() => void) | null = null;
 
 		(async () => {
+			// Wait for the layout's scroll bootstrap (Lenis bridge + scrollerProxy
+			// + ScrollTrigger.defaults). Creating triggers before this is set up
+			// causes pins to fire against the wrong scroller on hard reload.
+			await (window as Window & { __scrollReady?: Promise<void> }).__scrollReady;
+
 			const [{ gsap }, { ScrollTrigger }] = await Promise.all([
 				import('gsap'),
 				import('gsap/ScrollTrigger')

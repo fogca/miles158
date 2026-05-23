@@ -24,8 +24,15 @@
 	let lenis: import('lenis').default | null = null;
 	let tickerFn: ((time: number) => void) | null = null;
 
+	// Public Promise the children await before creating ScrollTrigger instances.
+	// Without this, on hard reload children race the layout: a child trigger gets
+	// created against native scroll BEFORE we register scrollerProxy + defaults,
+	// then on first scroll pins fire in the wrong order and sections jump.
 	if (browser) {
-		bootstrapScroll();
+		let resolveReady: () => void = () => {};
+		const scrollReady = new Promise<void>((r) => (resolveReady = r));
+		(window as Window & { __scrollReady?: Promise<void> }).__scrollReady = scrollReady;
+		bootstrapScroll().finally(() => resolveReady());
 	}
 
 	async function bootstrapScroll() {
