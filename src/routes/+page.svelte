@@ -31,7 +31,12 @@
 </svelte:head>
 
 <main class="home">
-	<ScrollVideo src="/images/hero_1_scrub.mp4" scrollDistance="300%" overlay>
+	<ScrollVideo
+		src="/images/hero_1_scrub.mp4"
+		poster="/images/hero_1_poster.jpg"
+		scrollDistance="300%"
+		overlay
+	>
 		{#snippet children({ progress })}
 			{@const centerOpacity = introDone
 				? Math.max(0, 1 - progress * 12)

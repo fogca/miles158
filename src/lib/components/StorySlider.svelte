@@ -27,6 +27,11 @@
 			]);
 			gsap.registerPlugin(ScrollTrigger);
 
+			// Mobile uses native scroll (no Lenis), so the scroller is window.
+			// PC routes through the Lenis-bridged document.body proxy.
+			const useLenis = window.matchMedia('(min-width: 768px)').matches;
+			const scroller: Element | Window = useLenis ? document.body : window;
+
 			// Entry: clip-path reveals from bottom → top while the previous
 			// section (.cpara) is scrolling out. Keyed off the prev section's
 			// bottom so there is no gap between Vis2 and the slider.
@@ -35,7 +40,7 @@
 			const entryTrigger = prevSection
 				? ScrollTrigger.create({
 						trigger: prevSection,
-						scroller: document.body,
+						scroller,
 						start: 'bottom bottom',
 						end: 'bottom top',
 						scrub: true,
@@ -51,7 +56,7 @@
 			// Pin: slide-driven activeIndex update
 			const pinTrigger = ScrollTrigger.create({
 				trigger: containerEl!,
-				scroller: document.body,
+				scroller,
 				start: 'top top',
 				end: () => `+=${(slides.length - 1) * window.innerHeight}`,
 				pin: stageEl!,

@@ -29,14 +29,61 @@
 	}
 
 	async function bootstrapScroll() {
-		const [{ default: Lenis }, { gsap }, { ScrollTrigger }] = await Promise.all([
-			import('lenis'),
+		// Lenis on mobile fights iOS rubber-band scroll and feels wobbly
+		// ("ぐわんぐわん"). On SP we use native scroll instead, and keep
+		// ScrollTrigger pin/scrub features working against the window scroller.
+		const useLenis = window.matchMedia('(min-width: 768px)').matches;
+
+		const [{ gsap }, { ScrollTrigger }] = await Promise.all([
 			import('gsap'),
 			import('gsap/ScrollTrigger')
 		]);
 
 		gsap.registerPlugin(ScrollTrigger);
 
+		if (!useLenis) {
+			// Native scroll path — ScrollTrigger defaults to the window scroller.
+			// Just make sure any triggers that were registered before this
+			// bootstrap finished get recalibrated against the right scroller.
+			ScrollTrigger.refresh(true);
+
+			let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+			const debouncedRefresh = (hard = false) => {
+				if (refreshTimer) clearTimeout(refreshTimer);
+				refreshTimer = setTimeout(() => {
+					ScrollTrigger.refresh(hard);
+					refreshTimer = null;
+				}, 100);
+			};
+
+			const scheduleInitial = () => {
+				[200, 600, 1200, 2400].forEach((delay) =>
+					setTimeout(() => debouncedRefresh(true), delay)
+				);
+			};
+			if (document.readyState === 'complete') scheduleInitial();
+			else window.addEventListener('load', scheduleInitial, { once: true });
+
+			if ('fonts' in document) {
+				(document as Document & { fonts: { ready: Promise<unknown> } }).fonts.ready.then(() =>
+					debouncedRefresh(true)
+				);
+			}
+			if ('ResizeObserver' in window) {
+				let lastHeight = document.body.scrollHeight;
+				const ro = new ResizeObserver(() => {
+					const h = document.body.scrollHeight;
+					if (Math.abs(h - lastHeight) > 20) {
+						lastHeight = h;
+						debouncedRefresh();
+					}
+				});
+				ro.observe(document.body);
+			}
+			return;
+		}
+
+		const { default: Lenis } = await import('lenis');
 		const lenisInstance = new Lenis();
 		lenis = lenisInstance;
 
@@ -198,6 +245,11 @@
 		type="font/woff2"
 		crossorigin="anonymous"
 	/>
+
+	<!-- FONTPLUS — provides Tazugane Gothic StdN webfont -->
+	<script
+		src="https://webfont.fontplus.jp/accessor/script/fontplus.js?kqbwQX--jVA%3D&box=F6ABlUsNQ2k%3D&aa=1&ab=2"
+	></script>
 </svelte:head>
 
 <SiteHeader />

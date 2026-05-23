@@ -32,6 +32,11 @@
 			]);
 			gsap.registerPlugin(ScrollTrigger);
 
+			// Mobile uses native scroll (no Lenis), so the scroller is window.
+			// PC routes through the Lenis-bridged document.body proxy.
+			const useLenis = window.matchMedia('(min-width: 768px)').matches;
+			const scroller: Element | Window = useLenis ? document.body : window;
+
 			// Initial states
 			gsap.set(textEls, { opacity: 0, y: 40 });
 			gsap.set(image1El, {
@@ -49,7 +54,7 @@
 			const tl = gsap.timeline({
 				scrollTrigger: {
 					trigger: containerEl!,
-					scroller: document.body,
+					scroller,
 					start: 'top top',
 					end: '+=' + (texts.length + 5) * 100 + '%',
 					pin: true,
