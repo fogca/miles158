@@ -42,20 +42,22 @@
 
 <main class="Rental">
 	<div class="Rental__inner">
-		<!-- Hero -->
-		<section class="Rental__block Rental__hero section">
-			<h1 class="section-title">Car Rental</h1>
-			<p class="Rental__lead" lang="ja">{service.description}</p>
+		<!-- Hero: title LEFT, lead RIGHT on PC (same split pattern as below). -->
+		<section class="Rental__block Rental__split Rental__hero section">
+			<h1 class="section-title Rental__split-title">Car Rental</h1>
+			<div class="Rental__split-body">
+				<p class="Rental__lead" lang="ja">{service.description}</p>
+			</div>
 		</section>
-
 		<!-- Lineup + pricing -->
-		<section class="Rental__block Rental__lineup section">
+		<section class="Rental__block Rental__split Rental__lineup section">
 			<header class="Rental__section-head">
 				<p class="Rental__eyebrow">Lineup &amp; Pricing</p>
-				<h2 class="section-title" lang="ja">取扱車両と料金</h2>
+				<h2 class="section-title Rental__split-title" lang="ja">取扱車両と料金</h2>
 			</header>
 
-			<div class="Rental__cars">
+			<div class="Rental__split-body">
+				<div class="Rental__cars">
 				{#each lineup as car (car.id)}
 					<article class="Rental__car" data-status={car.status}>
 						<div class="Rental__car-media">
@@ -94,64 +96,69 @@
 						</div>
 					</article>
 				{/each}
+				</div>
 			</div>
 		</section>
 
 		<!-- Flow -->
-		<section class="Rental__block Rental__flow section">
+		<section class="Rental__block Rental__split Rental__flow section">
 			<header class="Rental__section-head">
 				<p class="Rental__eyebrow">How to Rent</p>
-				<h2 class="section-title" lang="ja">ご利用フロー</h2>
+				<h2 class="section-title Rental__split-title" lang="ja">ご利用フロー</h2>
 			</header>
 
-			<ol class="Rental__steps">
-				{#each rentalFlow as step (step.number)}
-					<li class="Rental__step">
-						<p class="Rental__step-num" lang="en">{step.number}</p>
-						<div class="Rental__step-body">
-							<h3 class="Rental__step-title">
-								<span lang="en">{step.title}</span>
-								<span class="Rental__step-title-ja" lang="ja">／ {step.titleJa}</span>
-							</h3>
-							<p class="Rental__step-text" lang="ja">{step.body}</p>
-						</div>
-					</li>
-				{/each}
-			</ol>
+			<div class="Rental__split-body">
+				<ol class="Rental__steps">
+					{#each rentalFlow as step (step.number)}
+						<li class="Rental__step">
+							<p class="Rental__step-num" lang="en">{step.number}</p>
+							<div class="Rental__step-body">
+								<h3 class="Rental__step-title">
+									<span lang="en">{step.title}</span>
+									<span class="Rental__step-title-ja" lang="ja">／ {step.titleJa}</span>
+								</h3>
+								<p class="Rental__step-text" lang="ja">{step.body}</p>
+							</div>
+						</li>
+					{/each}
+				</ol>
+			</div>
 		</section>
 
 		<!-- Conditions -->
-		<section class="Rental__block Rental__conditions section">
+		<section class="Rental__block Rental__split Rental__conditions section">
 			<header class="Rental__section-head">
 				<p class="Rental__eyebrow">Requirements</p>
-				<h2 class="section-title" lang="ja">必要書類とご利用条件</h2>
+				<h2 class="section-title Rental__split-title" lang="ja">必要書類とご利用条件</h2>
 			</header>
 
-			<div class="Rental__cond-grid">
-				<div class="Rental__cond">
-					<h3 class="Rental__cond-title" lang="ja">必要書類</h3>
-					<ul class="Rental__cond-list">
-						{#each rentalConditions.documents as item}
-							<li lang="ja">{item}</li>
-						{/each}
-					</ul>
+			<div class="Rental__split-body">
+				<div class="Rental__cond-grid">
+					<div class="Rental__cond">
+						<h3 class="Rental__cond-title" lang="ja">必要書類</h3>
+						<ul class="Rental__cond-list">
+							{#each rentalConditions.documents as item}
+								<li lang="ja">{item}</li>
+							{/each}
+						</ul>
+					</div>
+
+					<div class="Rental__cond">
+						<h3 class="Rental__cond-title" lang="ja">ご利用条件</h3>
+						<ul class="Rental__cond-list">
+							{#each rentalConditions.requirements as item}
+								<li lang="ja">{item}</li>
+							{/each}
+						</ul>
+					</div>
 				</div>
 
-				<div class="Rental__cond">
-					<h3 class="Rental__cond-title" lang="ja">ご利用条件</h3>
-					<ul class="Rental__cond-list">
-						{#each rentalConditions.requirements as item}
-							<li lang="ja">{item}</li>
-						{/each}
-					</ul>
-				</div>
+				<ul class="Rental__notes">
+					{#each rentalConditions.notes as note}
+						<li lang="ja">※ {note}</li>
+					{/each}
+				</ul>
 			</div>
-
-			<ul class="Rental__notes">
-				{#each rentalConditions.notes as note}
-					<li lang="ja">※ {note}</li>
-				{/each}
-			</ul>
 		</section>
 	</div>
 </main>
@@ -167,16 +174,6 @@
 		padding-inline: var(--padding);
 	}
 
-	@media (min-width: 1024px) {
-		.Rental__inner {
-			margin-left: auto;
-			margin-right: 0;
-			max-width: 50%;
-			padding-right: var(--padding);
-			padding-left: var(--space-7);
-		}
-	}
-
 	.Rental__block + .Rental__block {
 		margin-top: var(--space-10);
 	}
@@ -186,11 +183,40 @@
 		padding-bottom: 0;
 	}
 
+	/* PC: each split-section is a two-column grid — section header on the LEFT,
+	   body on the RIGHT. Mobile keeps the header above. */
+	@media (min-width: 1024px) {
+		.Rental__split {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: var(--space-7);
+			align-items: start;
+		}
+
+		.Rental__split .Rental__section-head {
+			margin-bottom: 0;
+		}
+	}
+
+	/* Hero h1 sits directly in the split (no section-head wrapper).
+	   Match the H2 step used by the other split titles. */
+	.Rental__hero .Rental__split-title {
+		font-size: var(--fs-h2);
+		line-height: 1.2;
+		margin-bottom: var(--space-5);
+	}
+
+	@media (min-width: 1024px) {
+		.Rental__hero .Rental__split-title {
+			margin-bottom: 0;
+		}
+	}
+
 	.Rental__lead {
 		font-size: var(--fs-h5);
 		line-height: 1.85;
 		opacity: 0.85;
-		margin: var(--space-5) 0 0;
+		margin: 0;
 		max-width: 60ch;
 	}
 

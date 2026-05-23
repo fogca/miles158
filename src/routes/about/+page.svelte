@@ -1,5 +1,4 @@
 <script lang="ts">
-	import LogoMain from '$lib/components/LogoMain.svelte';
 	import { services } from '$lib/data/content';
 </script>
 
@@ -23,65 +22,70 @@
 </svelte:head>
 
 <main class="About">
-	<section class="About__intro-wrap section">
-		<div class="About__intro">
-			<h1 class="About__lead" lang="ja">
+	<div class="About__inner">
+		<section class="About__block About__split About__intro section">
+			<h1 class="About__lead About__split-title" lang="ja">
 				MILES 158 は、<br />名古屋・西区に生まれた<br />車好きのためのカーラウンジ。
 			</h1>
-			<div class="About__body" lang="ja">
+			<div class="About__split-body About__body" lang="ja">
 				<p>
 					「車と走る喜びをもっと身近に」 ―
 					私たちが見つめているのは、距離や所有の量ではなく、車と共に流れる時間の質です。
 					カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンスという4つのサービスを通じて、車と過ごすあらゆる時間を豊かにしていきたいと考えています。
 				</p>
 			</div>
-		</div>
-	</section>
-
-	<div class="About__inner">
-		<section class="About__block About__logo">
-			<LogoMain width="100%" title="MILES 158" />
+		</section>
+		<section class="About__block About__logoguide">
+			<img
+				src="/images/logo-guideline.png"
+				alt="MILES 158 logotype guideline — derivation of MILES and the route 158 reference"
+				loading="lazy"
+			/>
 		</section>
 
-		<section class="About__block About__services section">
-			<h2 class="section-title">4 Services</h2>
-			<div class="About__services-grid">
-				{#each services as service (service.id)}
-					<article class="About__service">
-						<header>
-							<p class="About__service-num">Service {service.number}</p>
-							<h3 class="About__service-name">{service.name}</h3>
-						</header>
-						<p class="About__service-desc" lang="ja">{service.description}</p>
-					</article>
-				{/each}
+		<section class="About__block About__split About__services section">
+			<h2 class="section-title About__split-title">4 Services</h2>
+			<div class="About__split-body">
+				<div class="About__services-grid">
+					{#each services as service (service.id)}
+						<article class="About__service">
+							<header>
+								<p class="About__service-num">Service {service.number}</p>
+								<h3 class="About__service-name">{service.name}</h3>
+							</header>
+							<p class="About__service-desc" lang="ja">{service.description}</p>
+						</article>
+					{/each}
+				</div>
 			</div>
 		</section>
 
-		<section class="About__block About__company section">
-			<h2 class="section-title About__company-title" lang="ja">会社概要</h2>
-			<dl class="About__company-list" lang="ja">
-				<div class="About__row">
-					<dt>商号</dt>
-					<dd>MILES 158</dd>
-				</div>
-				<div class="About__row">
-					<dt>所在地</dt>
-					<dd>愛知県名古屋市西区 国道158号沿い</dd>
-				</div>
-				<div class="About__row">
-					<dt>事業内容</dt>
-					<dd>カーレンタル / クラブコミュニティ / カフェラウンジ / メンテナンス</dd>
-				</div>
-				<div class="About__row">
-					<dt>設立</dt>
-					<dd>2026年</dd>
-				</div>
-				<div class="About__row">
-					<dt>お問い合わせ</dt>
-					<dd><a href="mailto:hi@miles158.com">hi@miles158.com</a></dd>
-				</div>
-			</dl>
+		<section class="About__block About__split About__company section">
+			<h2 class="section-title About__split-title" lang="ja">会社概要</h2>
+			<div class="About__split-body">
+				<dl class="About__company-list" lang="ja">
+					<div class="About__row">
+						<dt>商号</dt>
+						<dd>MILES 158</dd>
+					</div>
+					<div class="About__row">
+						<dt>所在地</dt>
+						<dd>愛知県名古屋市西区 国道158号沿い</dd>
+					</div>
+					<div class="About__row">
+						<dt>事業内容</dt>
+						<dd>カーレンタル / クラブコミュニティ / カフェラウンジ / メンテナンス</dd>
+					</div>
+					<div class="About__row">
+						<dt>設立</dt>
+						<dd>2026年</dd>
+					</div>
+					<div class="About__row">
+						<dt>お問い合わせ</dt>
+						<dd><a href="mailto:hi@miles158.com">hi@miles158.com</a></dd>
+					</div>
+				</dl>
+			</div>
 		</section>
 	</div>
 </main>
@@ -92,40 +96,30 @@
 		padding-top: calc(var(--space-11) + var(--space-5));
 	}
 
-	/* Intro lives in its own wrapper so it can sit on the LEFT on PC
-	   while the rest of About sits on the right (.About__inner). */
-	.About__intro-wrap {
-		max-width: var(--max-width);
-		margin: 0 auto;
-		padding-inline: var(--padding);
-		padding-top: 0;
-		padding-bottom: 0;
-		margin-bottom: var(--space-9);
-	}
-
-	@media (min-width: 1024px) {
-		.About__intro-wrap {
-			margin-left: 0;
-			margin-right: auto;
-			max-width: 50%;
-			padding-left: var(--padding);
-			padding-right: var(--space-7);
-		}
-	}
-
 	.About__inner {
 		max-width: var(--max-width);
 		margin: 0 auto;
 		padding-inline: var(--padding);
 	}
 
+	/* PC: each split-section is a two-column grid — title on the LEFT (aligned
+	   with the intro), content on the RIGHT. Mobile keeps the title above. */
+	.About__split-title {
+		font-size: var(--fs-h2);
+		line-height: 1.2;
+		margin-bottom: var(--space-6);
+	}
+
 	@media (min-width: 1024px) {
-		.About__inner {
-			margin-left: auto;
-			margin-right: 0;
-			max-width: 50%;
-			padding-right: var(--padding);
-			padding-left: var(--space-7);
+		.About__split {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: var(--space-7);
+			align-items: start;
+		}
+
+		.About__split-title {
+			margin-bottom: 0;
 		}
 	}
 
@@ -150,24 +144,23 @@
 		opacity: 0.85;
 	}
 
-	/* Match Rental page convention: section titles render at H2 step,
-	   not the global .section-title clamp. */
-	.About__company-title {
-		font-size: var(--fs-h2);
-		line-height: 1.2;
-		margin-bottom: var(--space-6);
+	/* ── Logotype guideline (exported from Figma) ─────────── */
+	.About__logoguide img {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 4px;
 	}
 
-	.About__logo {
-		max-width: 360px;
-		margin: 0 auto;
-		padding-block: var(--space-9);
-		color: var(--c-navy);
-	}
-
+	/* PC: image lives in the right column, aligned with all other split sections. */
 	@media (min-width: 1024px) {
-		.About__logo {
-			margin-left: 0;
+		.About__logoguide {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: var(--space-7);
+		}
+		.About__logoguide img {
+			grid-column: 2 / 3;
 		}
 	}
 
