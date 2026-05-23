@@ -26,16 +26,32 @@
 <footer class="SiteFooter" data-dark-section aria-labelledby="site-footer-heading">
 	<h2 id="site-footer-heading" class="sr-only">MILES 158</h2>
 
-	<div class="SiteFooter__inner">
-		<ul class="SiteFooter__nav">
-			{#each SITE_NAV as item (item.href)}
-				<li><a href={item.href}>{item.label}</a></li>
-			{/each}
-		</ul>
+	<div class="SiteFooter__grid">
+		<!-- Column 1: brand logo + place line -->
+		<div class="SiteFooter__col SiteFooter__col--brand">
+			<div class="SiteFooter__logo" aria-hidden="true">
+				<LogoMain width="100%" title="MILES 158" />
+			</div>
+			<p class="SiteFooter__tagline" lang="ja">
+				名古屋・西区 国道158号沿い<br />
+				車と過ごす時間のためのラウンジ。
+			</p>
+		</div>
 
-		<div class="SiteFooter__group">
-			<p class="SiteFooter__label">Get in touch?</p>
-			<ul class="SiteFooter__nav">
+		<!-- Column 2: site nav -->
+		<nav class="SiteFooter__col" aria-label="Footer navigation">
+			<h3 class="SiteFooter__heading">Site</h3>
+			<ul class="SiteFooter__list">
+				{#each SITE_NAV as item (item.href)}
+					<li><a href={item.href}>{item.label}</a></li>
+				{/each}
+			</ul>
+		</nav>
+
+		<!-- Column 3: contact / social -->
+		<div class="SiteFooter__col">
+			<h3 class="SiteFooter__heading">Get in touch</h3>
+			<ul class="SiteFooter__list">
 				{#each CONTACT as item (item.href)}
 					<li>
 						<a
@@ -48,13 +64,15 @@
 			</ul>
 		</div>
 
-		<div class="SiteFooter__group">
-			<p class="SiteFooter__label">Visit Us</p>
-			<a href="/reserve" class="btn-outline btn-outline--sm" lang="ja">来店予約</a>
-		</div>
-
-		<div class="SiteFooter__logo" aria-hidden="true">
-			<LogoMain width="100%" title="MILES 158" />
+		<!-- Column 4: reservation CTA -->
+		<div class="SiteFooter__col SiteFooter__col--cta">
+			<h3 class="SiteFooter__heading">Visit Us</h3>
+			<p class="SiteFooter__note" lang="ja">
+				ご来店・試乗・ご相談はお気軽にお問い合わせください。
+			</p>
+			<a href="/reserve" class="btn-outline btn-outline--sm SiteFooter__cta" lang="ja"
+				>来店予約</a
+			>
 		</div>
 	</div>
 
@@ -70,60 +88,59 @@
 
 <style>
 	.SiteFooter {
-		background: var(--c-navy);
+		background: #0d152b;
 		color: var(--c-sky);
 		padding: var(--space-10) 0 var(--space-6);
+		margin-top: 80px;
+	}
+
+	@media (min-width: 1024px) {
+		.SiteFooter {
+			margin-top: 120px;
+		}
 	}
 
 	.SiteFooter :global(*) {
 		color: var(--c-sky);
 	}
 
-	.SiteFooter__inner {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-9);
+	/* ── Grid (4-col on desktop, stacked on mobile) ─────────── */
+	.SiteFooter__grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-8);
 		padding-inline: var(--padding);
 	}
 
-	.SiteFooter__nav {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
+	@media (min-width: 768px) {
+		.SiteFooter__grid {
+			grid-template-columns: 2fr 1fr 1fr 1.5fr;
+			gap: var(--space-7);
+			align-items: start;
+		}
 	}
 
-	.SiteFooter__nav a {
-		font-size: var(--fs-h3);
-		text-decoration: none;
-		transition: opacity 0.2s ease;
-	}
-
-	.SiteFooter__nav a:hover {
-		opacity: 0.7;
-	}
-
-	.SiteFooter__group {
+	.SiteFooter__col {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-3);
 	}
 
-	.SiteFooter__label {
-		font-size: var(--fs-h6);
-		opacity: 0.6;
-		margin: 0;
-	}
-
-	.SiteFooter__group .btn-outline {
-		align-self: flex-start;
+	/* Brand column */
+	.SiteFooter__col--brand {
+		gap: var(--space-5);
 	}
 
 	.SiteFooter__logo {
-		width: 50%;
-		max-width: 320px;
+		width: 60%;
+		max-width: 260px;
+	}
+
+	@media (min-width: 768px) {
+		.SiteFooter__logo {
+			width: 100%;
+			max-width: 240px;
+		}
 	}
 
 	.SiteFooter__logo :global(svg) {
@@ -132,6 +149,63 @@
 		height: auto;
 	}
 
+	.SiteFooter__tagline {
+		font-size: var(--fs-h6);
+		line-height: 1.6;
+		opacity: 0.7;
+		max-width: 28ch;
+		margin: 0;
+	}
+
+	/* Column headings (small caps-feel uppercase eyebrow) */
+	.SiteFooter__heading {
+		font-size: var(--fs-h6);
+		font-weight: 500;
+		letter-spacing: 0.04em;
+		opacity: 0.55;
+		margin: 0;
+	}
+
+	/* Nav / contact lists */
+	.SiteFooter__list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.SiteFooter__list a {
+		font-size: var(--fs-h5);
+		text-decoration: none;
+		opacity: 0.9;
+		transition: opacity 0.2s ease;
+	}
+
+	.SiteFooter__list a:hover {
+		opacity: 0.65;
+	}
+
+	/* CTA column */
+	.SiteFooter__col--cta {
+		gap: var(--space-3);
+	}
+
+	.SiteFooter__note {
+		font-size: var(--fs-h6);
+		line-height: 1.6;
+		opacity: 0.7;
+		margin: 0;
+		max-width: 28ch;
+	}
+
+	.SiteFooter__cta {
+		align-self: flex-start;
+		margin-top: var(--space-2);
+	}
+
+	/* ── Bottom row ─────────────────────────────────────────── */
 	.SiteFooter__bottom {
 		margin-top: var(--space-9);
 		padding: var(--space-5) var(--padding) 0;

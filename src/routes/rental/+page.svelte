@@ -1,43 +1,463 @@
 <script lang="ts">
-	import { services } from '$lib/data/content';
+	import {
+		services,
+		cars,
+		rentalPricing,
+		rentalFlow,
+		rentalConditions
+	} from '$lib/data/content';
+
 	const service = services.find((s) => s.id === 'rental')!;
+
+	// Join cars[] with rentalPricing[] so the template can render in car-order
+	// while pulling rates from the pricing registry.
+	const lineup = cars.map((car) => {
+		const pricing = rentalPricing.find((p) => p.carId === car.id);
+		return {
+			...car,
+			status: pricing?.status ?? 'coming-soon',
+			rates: pricing?.rates ?? []
+		};
+	});
 </script>
 
 <svelte:head>
 	<title>Car Rental — MILES 158</title>
+	<meta
+		name="description"
+		content="MILES 158 のカーレンタル。Lexus LC500 / LM500 の料金（日額・週末・マンスリー）、ご利用フロー、必要書類・条件をご案内。"
+	/>
+	<meta property="og:title" content="Car Rental — MILES 158" />
+	<meta
+		property="og:description"
+		content="Lexus LC500 / LM500 の高級カーレンタル。料金・ご利用方法・必要書類のご案内。"
+	/>
+	<meta name="twitter:title" content="Car Rental — MILES 158" />
+	<meta
+		name="twitter:description"
+		content="Lexus LC500 / LM500 の高級カーレンタル。料金・ご利用方法のご案内。"
+	/>
+	<link rel="canonical" href="https://miles158.pages.dev/rental" />
 </svelte:head>
 
-<main class="page">
-	<section class="hero section">
-		<div class="container">
+<main class="Rental">
+	<div class="Rental__inner">
+		<!-- Hero -->
+		<section class="Rental__block Rental__hero section">
 			<h1 class="section-title">Car Rental</h1>
-			<p class="lead" lang="ja">{service.description}</p>
-		</div>
-	</section>
+			<p class="Rental__lead" lang="ja">{service.description}</p>
+		</section>
 
-	<section class="placeholder section">
-		<div class="container">
-			<p lang="ja">※ 取扱車両 / 料金 / 利用フロー の詳細はこのページに追加予定。</p>
-		</div>
-	</section>
+		<!-- Lineup + pricing -->
+		<section class="Rental__block Rental__lineup section">
+			<header class="Rental__section-head">
+				<p class="Rental__eyebrow">Lineup &amp; Pricing</p>
+				<h2 class="section-title" lang="ja">取扱車両と料金</h2>
+			</header>
+
+			<div class="Rental__cars">
+				{#each lineup as car (car.id)}
+					<article class="Rental__car" data-status={car.status}>
+						<div class="Rental__car-media">
+							<img src={car.image} alt={car.name} loading="lazy" />
+						</div>
+
+						<div class="Rental__car-body">
+							<header class="Rental__car-head">
+								<h3 class="Rental__car-name">{car.name}</h3>
+								<p class="Rental__car-sub">{car.subtitle}</p>
+							</header>
+
+							{#if car.status === 'available'}
+								<dl class="Rental__rates">
+									{#each car.rates as rate (rate.tier)}
+										<div class="Rental__rate">
+											<dt class="Rental__rate-label">
+												<span class="Rental__rate-en" lang="en">{rate.label}</span>
+												<span class="Rental__rate-ja" lang="ja">{rate.labelJa}</span>
+											</dt>
+											<dd class="Rental__rate-value">
+												<span class="Rental__rate-price">{rate.price}</span>
+												{#if rate.note}
+													<span class="Rental__rate-note">{rate.note}</span>
+												{/if}
+											</dd>
+										</div>
+									{/each}
+								</dl>
+							{:else}
+								<p class="Rental__coming-soon" lang="ja">
+									<span class="Rental__coming-badge">Coming Soon</span>
+									料金・受付開始時期は準備中です。
+								</p>
+							{/if}
+						</div>
+					</article>
+				{/each}
+			</div>
+		</section>
+
+		<!-- Flow -->
+		<section class="Rental__block Rental__flow section">
+			<header class="Rental__section-head">
+				<p class="Rental__eyebrow">How to Rent</p>
+				<h2 class="section-title" lang="ja">ご利用フロー</h2>
+			</header>
+
+			<ol class="Rental__steps">
+				{#each rentalFlow as step (step.number)}
+					<li class="Rental__step">
+						<p class="Rental__step-num" lang="en">{step.number}</p>
+						<div class="Rental__step-body">
+							<h3 class="Rental__step-title">
+								<span lang="en">{step.title}</span>
+								<span class="Rental__step-title-ja" lang="ja">／ {step.titleJa}</span>
+							</h3>
+							<p class="Rental__step-text" lang="ja">{step.body}</p>
+						</div>
+					</li>
+				{/each}
+			</ol>
+		</section>
+
+		<!-- Conditions -->
+		<section class="Rental__block Rental__conditions section">
+			<header class="Rental__section-head">
+				<p class="Rental__eyebrow">Requirements</p>
+				<h2 class="section-title" lang="ja">必要書類とご利用条件</h2>
+			</header>
+
+			<div class="Rental__cond-grid">
+				<div class="Rental__cond">
+					<h3 class="Rental__cond-title" lang="ja">必要書類</h3>
+					<ul class="Rental__cond-list">
+						{#each rentalConditions.documents as item}
+							<li lang="ja">{item}</li>
+						{/each}
+					</ul>
+				</div>
+
+				<div class="Rental__cond">
+					<h3 class="Rental__cond-title" lang="ja">ご利用条件</h3>
+					<ul class="Rental__cond-list">
+						{#each rentalConditions.requirements as item}
+							<li lang="ja">{item}</li>
+						{/each}
+					</ul>
+				</div>
+			</div>
+
+			<ul class="Rental__notes">
+				{#each rentalConditions.notes as note}
+					<li lang="ja">※ {note}</li>
+				{/each}
+			</ul>
+		</section>
+	</div>
 </main>
 
 <style>
-	.hero {
-		min-height: 60vh;
-		display: flex;
-		align-items: center;
+	.Rental {
 		padding-top: calc(var(--space-11) + var(--space-5));
 	}
-	.lead {
-		max-width: 60ch;
-		font-size: clamp(1rem, 1.3vw, 1.15rem);
+
+	.Rental__inner {
+		max-width: var(--max-width);
+		margin: 0 auto;
+		padding-inline: var(--padding);
+	}
+
+	@media (min-width: 1024px) {
+		.Rental__inner {
+			margin-left: auto;
+			margin-right: 0;
+			max-width: 50%;
+			padding-right: var(--padding);
+			padding-left: var(--space-7);
+		}
+	}
+
+	.Rental__block + .Rental__block {
+		margin-top: var(--space-10);
+	}
+
+	.Rental__block.section {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.Rental__lead {
+		font-size: var(--fs-h5);
 		line-height: 1.85;
 		opacity: 0.85;
-		margin-top: 2rem;
+		margin: var(--space-5) 0 0;
+		max-width: 60ch;
 	}
-	.placeholder p {
-		opacity: 0.5;
-		font-size: 13px;
+
+	.Rental__section-head {
+		margin-bottom: var(--space-6);
+	}
+
+	/* Override the global .section-title (clamp 2rem–3.5rem) on this page —
+	   the rental layout reads better at the smaller --fs-h2 step. */
+	.Rental__section-head .section-title {
+		font-size: var(--fs-h2);
+		line-height: 1.2;
+		margin-bottom: 0;
+	}
+
+	.Rental__eyebrow {
+		font-size: var(--fs-h6);
+		opacity: 0.55;
+		margin: 0 0 var(--space-2);
+		letter-spacing: 0.06em;
+	}
+
+	/* ── Lineup ─────────────────────────────────────────────── */
+	.Rental__cars {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-9);
+	}
+
+	.Rental__car {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-5);
+	}
+
+	.Rental__car-media {
+		background: var(--color-line, rgba(0, 0, 0, 0.05));
+		border-radius: 6px;
+		overflow: hidden;
+		aspect-ratio: 16 / 10;
+	}
+
+	.Rental__car-media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.Rental__car-head {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		margin-bottom: var(--space-5);
+	}
+
+	.Rental__car-name {
+		font-size: var(--fs-h3);
+		margin: 0;
+	}
+
+	.Rental__car-sub {
+		font-size: var(--fs-h6);
+		opacity: 0.6;
+		margin: 0;
+	}
+
+	.Rental__rates {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		margin: 0;
+	}
+
+	.Rental__rate {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-1);
+		padding: var(--space-4) 0;
+		border-top: 1px solid var(--color-line);
+	}
+
+	.Rental__rate:last-child {
+		border-bottom: 1px solid var(--color-line);
+	}
+
+	@media (min-width: 640px) {
+		.Rental__rate {
+			grid-template-columns: 10em 1fr;
+			gap: var(--space-4);
+			align-items: baseline;
+		}
+	}
+
+	.Rental__rate-label {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.Rental__rate-en {
+		font-size: var(--fs-h6);
+		opacity: 0.55;
+		letter-spacing: 0.04em;
+	}
+
+	.Rental__rate-ja {
+		font-size: var(--fs-h5);
+	}
+
+	.Rental__rate-value {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		margin: 0;
+	}
+
+	.Rental__rate-price {
+		font-size: var(--fs-h4);
+		font-feature-settings: 'tnum';
+	}
+
+	.Rental__rate-note {
+		font-size: var(--fs-h6);
+		opacity: 0.6;
+		line-height: 1.5;
+	}
+
+	.Rental__coming-soon {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		font-size: var(--fs-h5);
+		opacity: 0.75;
+		margin: 0;
+	}
+
+	.Rental__coming-badge {
+		align-self: flex-start;
+		font-size: var(--fs-h6);
+		letter-spacing: 0.08em;
+		padding: 4px 10px;
+		border: 1px solid currentColor;
+		border-radius: 999px;
+		opacity: 0.7;
+	}
+
+	.Rental__car[data-status='coming-soon'] .Rental__car-media {
+		opacity: 0.55;
+	}
+
+	/* ── Flow ───────────────────────────────────────────────── */
+	.Rental__steps {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+
+	.Rental__step {
+		display: grid;
+		grid-template-columns: 3em 1fr;
+		gap: var(--space-4);
+		padding-bottom: var(--space-6);
+		border-bottom: 1px solid var(--color-line);
+	}
+
+	.Rental__step:last-child {
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+
+	.Rental__step-num {
+		font-size: var(--fs-h3);
+		opacity: 0.4;
+		margin: 0;
+		line-height: 1;
+		font-feature-settings: 'tnum';
+	}
+
+	.Rental__step-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.Rental__step-title {
+		font-size: var(--fs-h4);
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		align-items: baseline;
+	}
+
+	.Rental__step-title-ja {
+		font-size: var(--fs-h5);
+		opacity: 0.7;
+	}
+
+	.Rental__step-text {
+		font-size: var(--fs-h5);
+		line-height: 1.85;
+		opacity: 0.82;
+		margin: 0;
+		max-width: 60ch;
+	}
+
+	/* ── Conditions ─────────────────────────────────────────── */
+	.Rental__cond-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-7);
+	}
+
+	@media (min-width: 768px) {
+		.Rental__cond-grid {
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-9) var(--space-7);
+		}
+	}
+
+	.Rental__cond-title {
+		font-size: var(--fs-h5);
+		margin: 0 0 var(--space-3);
+	}
+
+	.Rental__cond-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.Rental__cond-list li {
+		font-size: var(--fs-h6);
+		line-height: 1.7;
+		opacity: 0.85;
+		padding-left: 1.2em;
+		position: relative;
+	}
+
+	.Rental__cond-list li::before {
+		content: '·';
+		position: absolute;
+		left: 0;
+		font-size: 1.2em;
+		line-height: 1;
+	}
+
+	.Rental__notes {
+		list-style: none;
+		padding: 0;
+		margin: var(--space-7) 0 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.Rental__notes li {
+		font-size: var(--fs-h6);
+		line-height: 1.7;
+		opacity: 0.6;
+		max-width: 70ch;
 	}
 </style>

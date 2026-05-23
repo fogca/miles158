@@ -46,7 +46,14 @@
 				const next = onDark ? 'light' : 'dark';
 				if (next !== mode) mode = next;
 
-				const top = window.scrollY < 60;
+				// On home, keep the header hidden while the ScrollVideo hero is
+				// playing (~300vh), only revealing it near the end of the hero.
+				// On home, bottom hero content starts fading in at scroll progress 0.15
+				// (= 30vh given the 300vh scrollDistance / 200vh sticky range).
+				// Reveal the header at the same scroll point so they appear together.
+				const isHome = page.url.pathname === '/';
+				const threshold = isHome ? window.innerHeight * 0.3 : 60;
+				const top = window.scrollY < threshold;
 				if (top !== atTop) atTop = top;
 			};
 
@@ -63,12 +70,19 @@
 		<LogoSub width={120} title="MILES 158" />
 	</a>
 
-	<nav class="SiteHeader__nav" aria-label="Primary">
-		<a
-			href="/reserve"
-			class="btn-glass btn-glass--sm {mode === 'dark' ? 'btn-glass--dark' : ''}"
-			lang="ja"
-		>来店予約</a>
+	<!-- Desktop nav: inline links, no hamburger. -->
+	<nav class="SiteHeader__nav SiteHeader__nav--desktop" aria-label="Primary">
+		<ul class="SiteHeader__links">
+			{#each NAV.filter((n) => n.href !== '/') as item (item.href)}
+				<li><a href={item.href}>{item.label}</a></li>
+			{/each}
+		</ul>
+		<a href="/reserve" class="btn-outline btn-outline--sm" lang="ja">来店予約</a>
+	</nav>
+
+	<!-- Mobile nav: hamburger only. Desktop hides this entire group. -->
+	<nav class="SiteHeader__nav SiteHeader__nav--mobile" aria-label="Primary">
+		<a href="/reserve" class="btn-outline btn-outline--sm" lang="ja">来店予約</a>
 
 		<button
 			type="button"
@@ -115,7 +129,7 @@
 				</ul>
 			</nav>
 
-			<a href="/reserve" class="btn-glass" onclick={close} lang="ja">来店予約</a>
+			<a href="/reserve" class="btn-outline" onclick={close} lang="ja">来店予約</a>
 		</aside>
 	</div>
 {/if}
@@ -149,6 +163,25 @@
 		color: var(--c-navy);
 	}
 
+	/* Pin btn-outline's color to data-mode explicitly. If we relied on
+	   `color: inherit`, the parent's animated color would propagate as a
+	   continuously changing used value and the button's own `transition: color`
+	   would lag behind logo / hamburger (which inherit directly without their
+	   own transition). */
+	.SiteHeader[data-mode='light'] :global(.btn-outline) {
+		color: var(--c-sky);
+	}
+	.SiteHeader[data-mode='dark'] :global(.btn-outline) {
+		color: var(--c-navy);
+	}
+
+	/* On light-mode header, the global :hover sets text and bg both to navy
+	   → invisible. Override: invert text in light mode so hover stays legible. */
+	.SiteHeader[data-mode='light'] :global(.btn-outline:hover),
+	.SiteHeader[data-mode='light'] :global(.btn-outline:hover *) {
+		color: var(--c-sky);
+	}
+
 	.SiteHeader > * {
 		pointer-events: auto;
 	}
@@ -160,10 +193,55 @@
 		color: inherit;
 	}
 
+	/* PC: bumped up so the header logo reads cleanly alongside the inline nav. */
+	@media (min-width: 768px) {
+		.SiteHeader__logo :global(svg) {
+			width: 140px;
+			height: auto;
+		}
+	}
+
 	.SiteHeader__nav {
 		display: flex;
 		align-items: center;
 		gap: var(--space-3);
+	}
+
+	/* Desktop inline nav links */
+	.SiteHeader__links {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--space-5);
+	}
+
+	.SiteHeader__links a {
+		font-size: var(--fs-h6);
+		letter-spacing: 0.02em;
+		color: inherit;
+		text-decoration: none;
+		transition: opacity 0.2s ease;
+	}
+
+	.SiteHeader__links a:hover {
+		opacity: 0.7;
+	}
+
+	/* Show desktop nav ≥ 768px, mobile nav below */
+	.SiteHeader__nav--desktop {
+		display: none;
+	}
+
+	@media (min-width: 768px) {
+		.SiteHeader__nav--desktop {
+			display: flex;
+			gap: var(--space-5);
+		}
+		.SiteHeader__nav--mobile {
+			display: none;
+		}
 	}
 
 	.hamburger {
@@ -192,27 +270,23 @@
 	.MenuOverlay {
 		position: fixed;
 		inset: 0;
-		background: rgba(0, 10, 38, 0.45);
-		backdrop-filter: blur(18px);
-		-webkit-backdrop-filter: blur(18px);
 		z-index: var(--z-overlay);
 		display: flex;
-		justify-content: flex-end;
-		animation: fadeIn 0.3s var(--ease-default);
+		justify-content: stretch;
+		/* Circle expanding from the exact top-right corner, opening toward bottom-left */
+		clip-path: circle(0% at 100% 0%);
+		animation: circleExpand 0.85s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 	}
 
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-		}
+	@keyframes circleExpand {
 		to {
-			opacity: 1;
+			clip-path: circle(160% at 100% 0%);
 		}
 	}
 
 	.MenuPanel {
 		position: relative;
-		width: min(420px, 100vw);
+		width: 100%;
 		height: 100vh;
 		padding: 96px var(--padding) var(--space-7);
 		display: flex;
@@ -221,7 +295,40 @@
 		gap: var(--space-7);
 		background: var(--c-navy);
 		color: var(--c-sky);
-		animation: slideIn 0.4s var(--ease-default);
+	}
+
+	/* Children fade in only after the circle has expanded — soft, airy easing */
+	.MenuPanel > *,
+	.MenuPanel__logo,
+	.MenuPanel__close {
+		opacity: 0;
+		animation: itemFadeIn 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	.MenuPanel__logo {
+		animation-delay: 0.78s;
+	}
+	.MenuPanel__close {
+		animation-delay: 0.88s;
+	}
+	.MenuPanel__nav {
+		animation-delay: 0.98s;
+	}
+	.MenuPanel > .btn-outline {
+		animation-delay: 1.12s;
+	}
+
+	@keyframes itemFadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(22px);
+			filter: blur(4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+			filter: blur(0);
+		}
 	}
 
 	.MenuPanel__close {
@@ -252,17 +359,6 @@
 
 	.MenuPanel__close span:nth-child(2) {
 		transform: translate(-50%, -50%) rotate(-45deg);
-	}
-
-	@keyframes slideIn {
-		from {
-			transform: translateX(40px);
-			opacity: 0;
-		}
-		to {
-			transform: translateX(0);
-			opacity: 1;
-		}
 	}
 
 	.MenuPanel__logo {

@@ -49,11 +49,13 @@
 			const tl = gsap.timeline({
 				scrollTrigger: {
 					trigger: containerEl!,
+					scroller: document.body,
 					start: 'top top',
 					end: '+=' + (texts.length + 5) * 100 + '%',
 					pin: true,
 					scrub: 1,
 					anticipatePin: 1,
+					invalidateOnRefresh: true,
 					onUpdate: (self) => {
 						// Texts occupy roughly the first 55% of the pin; switch
 						// the header to "light on dark" mode once we're past them.

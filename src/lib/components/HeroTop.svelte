@@ -13,8 +13,40 @@
 
 		let cleanup: (() => void) | null = null;
 
+		// Lock scroll during the opening animation. Premature scrolling races
+		// ScrollTrigger / Lenis calibration → sections appear in the wrong order.
+		// We also lock native body scroll for extra safety.
+		const lenisInstance = (window as Window & {
+			__lenis?: { stop: () => void; start: () => void };
+		}).__lenis;
+
+		lenisInstance?.stop();
+		const prevOverflow = document.body.style.overflow;
+		const prevHtmlOverflow = document.documentElement.style.overflow;
+		document.body.style.overflow = 'hidden';
+		document.documentElement.style.overflow = 'hidden';
+
+		// Block wheel / touch events that would otherwise queue up while Lenis
+		// is stopped, then dump into scroll the instant we unlock.
+		const blockEvent = (e: Event) => {
+			e.preventDefault();
+		};
+		window.addEventListener('wheel', blockEvent, { passive: false });
+		window.addEventListener('touchmove', blockEvent, { passive: false });
+
+		const unlockScroll = () => {
+			window.removeEventListener('wheel', blockEvent);
+			window.removeEventListener('touchmove', blockEvent);
+			document.body.style.overflow = prevOverflow;
+			document.documentElement.style.overflow = prevHtmlOverflow;
+			lenisInstance?.start();
+		};
+
 		(async () => {
-			const { gsap } = await import('gsap');
+			const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+				import('gsap'),
+				import('gsap/ScrollTrigger')
+			]);
 
 			// Initial: white curtain covers everything, bg is slightly over-scaled
 			// (Apple-style subtle "Ken Burns" zoom-out reveal), content invisible
@@ -22,7 +54,20 @@
 			gsap.set(bgEl, { scale: 1.08, opacity: 0, filter: 'blur(6px)' });
 			gsap.set([headerEl, bottomEl], { opacity: 0, y: 28 });
 
-			const tl = gsap.timeline({ delay: 0.2 });
+			const tl = gsap.timeline({
+				delay: 0.2,
+				onComplete: () => {
+					unlockScroll();
+					// Refresh on the *next-next* frame, after Lenis has had a tick
+					// to re-sync its internal scroll value. Same-frame refresh
+					// races Lenis.start() and yields the wrong scrollTop.
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							ScrollTrigger.refresh(true);
+						});
+					});
+				}
+			});
 
 			// 1) Curtain slides upward with expo easing — feels like a stage curtain
 			tl.to(curtainEl, { yPercent: -100, duration: 1.4, ease: 'expo.inOut' });
@@ -43,7 +88,11 @@
 				'-=1.4'
 			);
 
-			cleanup = () => tl.kill();
+			cleanup = () => {
+				tl.kill();
+				// Make sure we don't leave scroll locked if the page is destroyed mid-animation
+				unlockScroll();
+			};
 		})();
 
 		return () => cleanup?.();
@@ -58,14 +107,14 @@
 	</div>
 	<div class="hero-gradient"></div>
 
-	<header class="hero-header container" bind:this={headerEl}>
+	<header class="hero-header" bind:this={headerEl}>
 		<h1 class="hero-brand">
 			<LogoMain width="100%" title={hero.brand} />
 		</h1>
 		<p class="hero-services" lang="ja">{hero.services}</p>
 	</header>
 
-	<div class="hero-bottom container" bind:this={bottomEl}>
+	<div class="hero-bottom" bind:this={bottomEl}>
 		<h2 class="hero-bigtitle">
 			{#each hero.bigTitle as line, i (i)}
 				<span class="line">{line}</span>
@@ -76,7 +125,7 @@
 				<span class="line-ja">{line}</span><br />
 			{/each}
 		</p>
-		<button type="button" class="btn-glass btn-glass--lg">{hero.ctaLabel}</button>
+		<button type="button" class="btn-outline btn-outline--sm">{hero.ctaLabel}</button>
 	</div>
 </section>
 
@@ -121,10 +170,10 @@
 		inset: 0;
 		background: linear-gradient(
 			180deg,
-			rgba(0, 10, 38, 0.35) 0%,
-			rgba(0, 10, 38, 0) 35%,
-			rgba(0, 10, 38, 0.55) 80%,
-			rgba(0, 10, 38, 0.9) 100%
+			rgba(0, 10, 38, 0) 0%,
+			rgba(0, 10, 38, 0) 55%,
+			rgba(0, 10, 38, 0.25) 80%,
+			rgba(0, 10, 38, 0.6) 100%
 		);
 		z-index: 1;
 	}
@@ -133,11 +182,23 @@
 	.hero-bottom {
 		position: relative;
 		z-index: 2;
+		padding-inline: var(--padding);
+	}
+
+	.hero-bottom {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: left;
+	}
+
+	.hero-bottom .btn-outline {
+		align-self: flex-start;
 	}
 
 	.hero-brand {
 		display: block;
-		width: clamp(220px, 36vw, 380px);
+		width: clamp(280px, 50vw, 560px);
 		margin: 0 0 18px 0;
 		color: #ffffff;
 		line-height: 0;

@@ -5,7 +5,11 @@ const IMG_A = '/images/car_10.png';
 const IMG_B = '/images/LC500.png';
 const IMG_C = '/images/car_02.png';
 const IMG_D = '/images/LM500.png';
-const ROTATION = [IMG_A, IMG_B, IMG_C, IMG_D];
+const IMG_E = '/images/car_03.png';
+const IMG_F = '/images/car_01.jpg';
+const IMG_G = '/images/car_04.png';
+const IMG_H = '/images/car_05.jpg';
+const ROTATION = [IMG_A, IMG_B, IMG_C, IMG_D, IMG_E, IMG_F, IMG_G, IMG_H];
 const alt = (i: number) => ROTATION[i % ROTATION.length];
 
 export type Slide = {
@@ -36,7 +40,7 @@ export const hero = {
 	bigTitle: ['Discover', 'the Sky'],
 	leadJa: ['車と走る喜びをもっと身近に。', 'さぁ旅にでよう'],
 	ctaLabel: 'Explore',
-	bgImage: IMG_C
+	bgImage: IMG_F
 };
 
 // Concept Parallax (mirrors avatr's .home_para — text reveal then image)
@@ -46,9 +50,9 @@ export const conceptParallax = {
 		'マイルズ158は<br class="sp-br">名古屋西区の国道158号線沿いに誕生した<br class="sp-br">車好きのためのカーラウンジです。<br class="sp-br"><br class="sp-br">カーレンタル、クラブカフェ、<br class="sp-br">クラブコミュニティ― 車と過ごす時間を<br class="sp-br">豊かに、そして身近にするためのサービスを、<br class="sp-br">ひとつの建物にまとめました。',
 		'さぁ、車と旅にでよう。'
 	],
-	// Vis1: car_10, Vis2 (CTA layer): LC500
-	image: IMG_A,
-	vis2Image: IMG_B
+	// Vis1: car_02, Vis2 (CTA layer): car_04
+	image: IMG_C,
+	vis2Image: IMG_G
 };
 
 // Concept Visual — 4 slides
@@ -112,8 +116,13 @@ export const services: Service[] = [
 ];
 
 // Service slides — used by StorySlider
+const serviceSlideImages: Record<string, string> = {
+	rental: '/images/car_05.png',
+	community: '/images/car_06.png',
+	cleaning: '/images/cleaning.png'
+};
 export const serviceSlides: Slide[] = services.map((s, i) => ({
-	image: alt(i),
+	image: serviceSlideImages[s.id] ?? alt(i),
 	title: s.name,
 	description: s.description,
 	label: s.name
@@ -139,5 +148,111 @@ export const cars: Car[] = [
 export const place = {
 	address: '愛知県名古屋市西区',
 	roadHint: '国道158号沿い',
-	mapImage: IMG_D
+	mapImage: '/images/place.JPG'
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Rental — pricing, flow, conditions
+// All `price` strings are placeholders (`¥--,---`) until final figures are
+// confirmed. Update the rates here; the rental page renders straight from this.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type RentalRate = {
+	tier: 'day' | 'weekend' | 'monthly';
+	label: string; // English
+	labelJa: string; // 日本語
+	price: string; // tax-inclusive
+	note?: string; // e.g. 走行距離 / 含まれるもの
+};
+
+export type CarRental = {
+	carId: string; // matches cars[].id
+	status: 'available' | 'coming-soon';
+	rates?: RentalRate[]; // omitted when status === 'coming-soon'
+};
+
+export const rentalPricing: CarRental[] = [
+	{
+		carId: 'lc500',
+		status: 'available',
+		rates: [
+			{
+				tier: 'day',
+				label: 'Day',
+				labelJa: '1日（24時間）',
+				price: '¥--,---',
+				note: '走行距離 -- km まで / 超過は別途'
+			},
+			{
+				tier: 'weekend',
+				label: 'Weekend',
+				labelJa: '週末（金〜日）',
+				price: '¥--,---',
+				note: '走行距離 -- km まで / 超過は別途'
+			},
+			{
+				tier: 'monthly',
+				label: 'Monthly',
+				labelJa: 'マンスリー（30日）',
+				price: '¥---,---',
+				note: '走行距離 ---- km まで / 超過は別途'
+			}
+		]
+	},
+	{
+		carId: 'lm500',
+		status: 'coming-soon'
+	}
+];
+
+export type FlowStep = {
+	number: string;
+	title: string; // English
+	titleJa: string; // 日本語
+	body: string;
+};
+
+export const rentalFlow: FlowStep[] = [
+	{
+		number: '01',
+		title: 'Inquiry',
+		titleJa: 'お問い合わせ・ご予約',
+		body: 'ご希望の車両と利用期間をお知らせください。空き状況を確認のうえ、折り返しご連絡いたします。'
+	},
+	{
+		number: '02',
+		title: 'Confirmation',
+		titleJa: '内容確認・お支払い',
+		body: 'ご利用内容、料金、必要書類をご確認いただきます。お支払いは事前のお振込にて承ります。'
+	},
+	{
+		number: '03',
+		title: 'Pick-up',
+		titleJa: 'ご来店・お引き渡し',
+		body: 'MILES 158 ラウンジにてお引き渡しいたします。運転免許証をご提示のうえ、車両の状態をご確認ください。'
+	},
+	{
+		number: '04',
+		title: 'Return',
+		titleJa: 'ご返却',
+		body: '満タンの状態でラウンジまでご返却ください。車両確認をもってご利用終了となります。'
+	}
+];
+
+export const rentalConditions = {
+	documents: [
+		'運転免許証（取得から1年以上経過していること）',
+		'本人確認書類（住所が確認できるもの）',
+		'クレジットカード（保証金確認のため）'
+	],
+	requirements: [
+		'満 25 歳以上であること',
+		'任意保険にご加入いただいていること',
+		'禁煙でのご利用にご協力ください'
+	],
+	notes: [
+		'走行距離が規定を超えた場合は別途料金が発生いたします。',
+		'事故・破損が発生した際は規定に基づきご負担をお願いする場合があります。',
+		'掲載料金はすべて税込です。最新の金額・空き状況は MILES 158 までお問い合わせください。'
+	]
 };

@@ -5,13 +5,28 @@
 
 <svelte:head>
 	<title>About — MILES 158</title>
+	<meta
+		name="description"
+		content="MILES 158 のブランド概要と 4 つのサービス（Car Rental / Club Community / Club Cafe / Cleaning）、会社概要。"
+	/>
+	<meta property="og:title" content="About — MILES 158" />
+	<meta
+		property="og:description"
+		content="MILES 158 のブランド概要と 4 つのサービス。名古屋・西区。"
+	/>
+	<meta name="twitter:title" content="About — MILES 158" />
+	<meta
+		name="twitter:description"
+		content="MILES 158 のブランド概要と 4 つのサービス。"
+	/>
+	<link rel="canonical" href="https://miles158.pages.dev/about" />
 </svelte:head>
 
 <main class="About">
-	<div class="About__inner">
-		<section class="About__block About__intro section">
+	<section class="About__intro-wrap section">
+		<div class="About__intro">
 			<h1 class="About__lead" lang="ja">
-				MILES 158 は、名古屋・西区に生まれた車好きのためのカーラウンジ。
+				MILES 158 は、<br />名古屋・西区に生まれた<br />車好きのためのカーラウンジ。
 			</h1>
 			<div class="About__body" lang="ja">
 				<p>
@@ -20,8 +35,10 @@
 					カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンスという4つのサービスを通じて、車と過ごすあらゆる時間を豊かにしていきたいと考えています。
 				</p>
 			</div>
-		</section>
+		</div>
+	</section>
 
+	<div class="About__inner">
 		<section class="About__block About__logo">
 			<LogoMain width="100%" title="MILES 158" />
 		</section>
@@ -42,7 +59,7 @@
 		</section>
 
 		<section class="About__block About__company section">
-			<h2 class="section-title">会社概要</h2>
+			<h2 class="section-title About__company-title" lang="ja">会社概要</h2>
 			<dl class="About__company-list" lang="ja">
 				<div class="About__row">
 					<dt>商号</dt>
@@ -75,6 +92,27 @@
 		padding-top: calc(var(--space-11) + var(--space-5));
 	}
 
+	/* Intro lives in its own wrapper so it can sit on the LEFT on PC
+	   while the rest of About sits on the right (.About__inner). */
+	.About__intro-wrap {
+		max-width: var(--max-width);
+		margin: 0 auto;
+		padding-inline: var(--padding);
+		padding-top: 0;
+		padding-bottom: 0;
+		margin-bottom: var(--space-9);
+	}
+
+	@media (min-width: 1024px) {
+		.About__intro-wrap {
+			margin-left: 0;
+			margin-right: auto;
+			max-width: 50%;
+			padding-left: var(--padding);
+			padding-right: var(--space-7);
+		}
+	}
+
 	.About__inner {
 		max-width: var(--max-width);
 		margin: 0 auto;
@@ -104,13 +142,20 @@
 		font-size: var(--fs-h2);
 		line-height: 1.5;
 		margin: 0 0 var(--space-6) 0;
-		max-width: 24ch;
 	}
 
 	.About__body p {
 		max-width: 60ch;
 		line-height: 1.85;
 		opacity: 0.85;
+	}
+
+	/* Match Rental page convention: section titles render at H2 step,
+	   not the global .section-title clamp. */
+	.About__company-title {
+		font-size: var(--fs-h2);
+		line-height: 1.2;
+		margin-bottom: var(--space-6);
 	}
 
 	.About__logo {

@@ -35,9 +35,11 @@
 			const entryTrigger = prevSection
 				? ScrollTrigger.create({
 						trigger: prevSection,
+						scroller: document.body,
 						start: 'bottom bottom',
 						end: 'bottom top',
 						scrub: true,
+						invalidateOnRefresh: true,
 						onUpdate: (self) => {
 							gsap.set(stageEl!, {
 								clipPath: `inset(${(1 - self.progress) * 100}% 0 0 0)`
@@ -49,12 +51,14 @@
 			// Pin: slide-driven activeIndex update
 			const pinTrigger = ScrollTrigger.create({
 				trigger: containerEl!,
+				scroller: document.body,
 				start: 'top top',
 				end: () => `+=${(slides.length - 1) * window.innerHeight}`,
 				pin: stageEl!,
 				pinSpacing: true,
 				scrub: 1,
 				anticipatePin: 1,
+				invalidateOnRefresh: true,
 				onUpdate: (self) => {
 					const segments = Math.max(1, slides.length - 1);
 					const exact = self.progress * segments;
@@ -97,6 +101,8 @@
 				<img src={slide.image} alt={slide.title} loading={i === 0 ? 'eager' : 'lazy'} />
 			</div>
 		{/each}
+
+		<div class="overlay"></div>
 
 		{#if slides[activeIndex]}
 			{#key activeIndex}
@@ -155,14 +161,22 @@
 		display: block;
 	}
 
+	.overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, rgba(0, 10, 38, 0.15) 0%, rgba(0, 10, 38, 0.55) 100%);
+		z-index: 4;
+		pointer-events: none;
+	}
+
 	.content {
 		position: absolute;
 		inset: 0;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		align-items: center;
-		text-align: center;
+		align-items: flex-start;
+		text-align: left;
 		padding: 0 var(--padding);
 		z-index: 5;
 		animation: fadeIn 0.7s ease both;
@@ -200,13 +214,17 @@
 	.nav {
 		position: absolute;
 		bottom: 4vh;
-		left: 50%;
-		transform: translateX(-50%);
+		left: var(--padding);
+		right: var(--padding);
 		display: flex;
-		gap: var(--space-5);
+		gap: 5px;
 		padding: 0;
 		margin: 0;
 		z-index: 10;
+	}
+
+	.nav li {
+		flex: 1;
 	}
 
 	.nav button {
@@ -224,9 +242,13 @@
 		opacity: 1;
 	}
 
+	.nav button {
+		width: 100%;
+	}
+
 	.nav .bar {
 		display: block;
-		width: 64px;
+		width: 100%;
 		height: 2px;
 		background: rgba(232, 244, 248, 0.22);
 		position: relative;
@@ -256,10 +278,7 @@
 		}
 		.nav {
 			bottom: 30px;
-			gap: var(--space-3);
-		}
-		.nav .bar {
-			width: 40px;
+			gap: 5px;
 		}
 	}
 </style>
