@@ -4,7 +4,14 @@
 	import StorySlider from '$lib/components/StorySlider.svelte';
 	import ScrollVideo from '$lib/stock/animation/scroll-video/ScrollVideo.svelte';
 	import LogoMain from '$lib/components/LogoMain.svelte';
-	import { hero, serviceSlides, cars, place } from '$lib/data/content';
+	import { page } from '$app/state';
+	import { cars, place } from '$lib/data/content';
+	import { getHero, getServiceSlides } from '$lib/i18n/marketing';
+	import { t, l as lhref, type Locale } from '$lib/i18n';
+
+	const L = (page.data.locale ?? 'ja') as Locale;
+	const hero = getHero(L);
+	const serviceSlides = getServiceSlides(L);
 
 	// Initial fade-in for the center logo on first paint.
 	// After this finishes we hand opacity control over to scroll progress.
@@ -60,12 +67,12 @@
 							<span class="line">{line}</span>
 						{/each}
 					</h2>
-					<p class="hero-content__lead" lang="ja">
+					<p class="hero-content__lead">
 						{#each hero.leadJa as line, i (i)}
 							<span>{line}</span><br />
 						{/each}
 					</p>
-					<a href="/about" class="btn-outline btn-outline--sm">{hero.ctaLabel}</a>
+					<a href={lhref(L, '/about')} class="btn-outline btn-outline--sm">{hero.ctaLabel}</a>
 				</div>
 			</div>
 		{/snippet}
@@ -78,9 +85,7 @@
 	<section class="cars section">
 		<div class="section-inner">
 			<h2 class="section-title">Cars</h2>
-			<p class="cars-lead" lang="ja">
-				厳選された Lexus を中心に、走る喜びを最大化する2台をご用意しています。
-			</p>
+			<p class="cars-lead">{t(L, 'home.carsLead')}</p>
 			<div class="cars-grid">
 				{#each cars as car (car.id)}
 					<article class="car-card">
@@ -100,10 +105,7 @@
 	<section class="place section">
 		<div class="section-inner">
 			<h2 class="section-title">Place</h2>
-			<p class="place-address" lang="ja">
-				{place.address}<br />
-				{place.roadHint}
-			</p>
+			<p class="place-address">{t(L, 'home.place')}</p>
 			<div class="place-map">
 				<img src={place.mapImage} alt="MILES 158 location map" loading="lazy" />
 			</div>

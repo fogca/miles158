@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { services } from '$lib/data/content';
+	import { page } from '$app/state';
+	import { getServices } from '$lib/i18n/marketing';
+	import { t, type Locale } from '$lib/i18n';
+
+	const L = (page.data.locale ?? 'ja') as Locale;
+	const services = getServices(L);
 </script>
 
 <svelte:head>
@@ -24,15 +29,9 @@
 <main class="About">
 	<div class="About__inner">
 		<section class="About__block About__split About__intro section">
-			<h1 class="About__lead About__split-title" lang="ja">
-				MILES 158 は、<br />名古屋・西区に生まれた<br />車好きのためのカーラウンジ。
-			</h1>
-			<div class="About__split-body About__body" lang="ja">
-				<p>
-					「車と走る喜びをもっと身近に」 ―
-					私たちが見つめているのは、距離や所有の量ではなく、車と共に流れる時間の質です。
-					カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンスという4つのサービスを通じて、車と過ごすあらゆる時間を豊かにしていきたいと考えています。
-				</p>
+			<h1 class="About__lead About__split-title">{@html t(L, 'about.introTitle')}</h1>
+			<div class="About__split-body About__body">
+				<p>{t(L, 'about.introBody')}</p>
 			</div>
 		</section>
 		<section class="About__block About__logoguide">
@@ -53,7 +52,7 @@
 								<p class="About__service-num">Service {service.number}</p>
 								<h3 class="About__service-name">{service.name}</h3>
 							</header>
-							<p class="About__service-desc" lang="ja">{service.description}</p>
+							<p class="About__service-desc">{service.description}</p>
 						</article>
 					{/each}
 				</div>
@@ -61,27 +60,27 @@
 		</section>
 
 		<section class="About__block About__split About__company section">
-			<h2 class="section-title About__split-title" lang="ja">会社概要</h2>
+			<h2 class="section-title About__split-title" >{t(L, 'about.companyTitle')}</h2>
 			<div class="About__split-body">
-				<dl class="About__company-list" lang="ja">
+				<dl class="About__company-list">
 					<div class="About__row">
-						<dt>商号</dt>
+						<dt>{t(L, 'about.coName')}</dt>
 						<dd>MILES 158</dd>
 					</div>
 					<div class="About__row">
-						<dt>所在地</dt>
-						<dd>愛知県名古屋市西区 国道158号沿い</dd>
+						<dt>{t(L, 'about.coAddress')}</dt>
+						<dd>{t(L, 'about.coAddressV')}</dd>
 					</div>
 					<div class="About__row">
-						<dt>事業内容</dt>
-						<dd>カーレンタル / クラブコミュニティ / カフェラウンジ / メンテナンス</dd>
+						<dt>{t(L, 'about.coBiz')}</dt>
+						<dd>{t(L, 'about.coBizV')}</dd>
 					</div>
 					<div class="About__row">
-						<dt>設立</dt>
-						<dd>2026年</dd>
+						<dt>{t(L, 'about.coFounded')}</dt>
+						<dd>2026</dd>
 					</div>
 					<div class="About__row">
-						<dt>お問い合わせ</dt>
+						<dt>{t(L, 'about.coContact')}</dt>
 						<dd><a href="mailto:hi@miles158.com">hi@miles158.com</a></dd>
 					</div>
 				</dl>

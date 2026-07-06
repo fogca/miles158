@@ -1,6 +1,10 @@
 <script lang="ts">
-	import { services } from '$lib/data/content';
-	const service = services.find((s) => s.id === 'community')!;
+	import { page } from '$app/state';
+	import { getServices } from '$lib/i18n/marketing';
+	import { t, type Locale } from '$lib/i18n';
+
+	const L = (page.data.locale ?? 'ja') as Locale;
+	const service = getServices(L).find((s) => s.id === 'community')!;
 </script>
 
 <svelte:head>
@@ -26,13 +30,13 @@
 	<section class="hero section">
 		<div class="section-inner">
 			<h1 class="section-title">Club Community</h1>
-			<p class="lead" lang="ja">{service.description}</p>
+			<p class="lead">{service.description}</p>
 		</div>
 	</section>
 
 	<section class="placeholder section">
 		<div class="section-inner">
-			<p lang="ja" class="mute">※ 入会案内 / メンバー特典 / イベント情報 はこのページに追加予定。</p>
+			<p class="mute">{t(L, 'community.placeholder')}</p>
 		</div>
 	</section>
 </main>

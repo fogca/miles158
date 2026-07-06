@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { conceptParallax } from '$lib/data/content';
+	import { page } from '$app/state';
+	import { getConceptParallax } from '$lib/i18n/marketing';
+	import { l, t, type Locale } from '$lib/i18n';
+
+	const L = (page.data.locale ?? 'ja') as Locale;
+	const conceptParallax = getConceptParallax(L);
 
 	// Pinned section — single ScrollTrigger spanning:
 	//   Texts fade in / out → Vis1 (image1 rises + grows; title + CTA fade in on top)
@@ -102,7 +107,7 @@
 	bind:this={containerEl}
 >
 	<div class="stage">
-		<div class="texts" lang="ja">
+		<div class="texts">
 			{#each texts as text, i (i)}
 				<h3 class="text" bind:this={textEls[i]}>{@html text}</h3>
 			{/each}
@@ -114,10 +119,8 @@
 		</div>
 
 		<div class="cta">
-			<h2 class="cta__title" lang="ja" bind:this={titleEl}>
-				さぁ、カーレンタルで<br class="sp-br" />旅にでよう。
-			</h2>
-			<a href="/rental" class="btn-outline" bind:this={ctaEl}>詳しく見る</a>
+			<h2 class="cta__title" bind:this={titleEl}>{@html t(L, 'home.ctaTitle')}</h2>
+			<a href={l(L, '/rental')} class="btn-outline" bind:this={ctaEl}>{t(L, 'common.viewMore')}</a>
 		</div>
 	</div>
 </section>

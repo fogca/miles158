@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { hero } from '$lib/data/content';
+	import { page } from '$app/state';
+	import { getHero } from '$lib/i18n/marketing';
+	import type { Locale } from '$lib/i18n';
+
+	const hero = getHero((page.data.locale ?? 'ja') as Locale);
 	import LogoMain from './LogoMain.svelte';
 
 	let curtainEl = $state<HTMLElement | null>(null);
@@ -111,7 +115,7 @@
 		<h1 class="hero-brand">
 			<LogoMain width="100%" title={hero.brand} />
 		</h1>
-		<p class="hero-services" lang="ja">{hero.services}</p>
+		<p class="hero-services">{hero.services}</p>
 	</header>
 
 	<div class="hero-bottom" bind:this={bottomEl}>
@@ -120,7 +124,7 @@
 				<span class="line">{line}</span>
 			{/each}
 		</h2>
-		<p class="hero-lead" lang="ja">
+		<p class="hero-lead">
 			{#each hero.leadJa as line, i (i)}
 				<span class="line-ja">{line}</span><br />
 			{/each}

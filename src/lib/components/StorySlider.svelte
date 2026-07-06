@@ -118,7 +118,7 @@
 			{#key activeIndex}
 				<div class="content">
 					<h2 class="title">{@html slides[activeIndex].title}</h2>
-					<p class="desc" lang="ja">{slides[activeIndex].description}</p>
+					<p class="desc">{slides[activeIndex].description}</p>
 				</div>
 			{/key}
 		{/if}

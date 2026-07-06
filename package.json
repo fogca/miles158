@@ -14,7 +14,11 @@
 		"format": "prettier --write .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run",
-		"gen": "wrangler types"
+		"gen": "wrangler types",
+		"db:migrate": "wrangler d1 migrations apply miles158-db --local",
+		"db:migrate:remote": "wrangler d1 migrations apply miles158-db --remote",
+		"db:reset": "rm -rf .wrangler/state/v3/d1 && wrangler d1 migrations apply miles158-db --local",
+		"db:console": "wrangler d1 execute miles158-db --local --command"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.4",

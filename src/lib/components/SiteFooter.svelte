@@ -1,5 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import LogoMain from './LogoMain.svelte';
+	import { l, t, LOCALES, LOCALE_LABELS, switchLocalePath, type Locale } from '$lib/i18n';
+
+	const L = $derived((page.data.locale ?? 'ja') as Locale);
 
 	type LinkItem = { label: string; href: string; external?: boolean };
 
@@ -32,10 +36,12 @@
 			<div class="SiteFooter__logo" aria-hidden="true">
 				<LogoMain width="100%" title="MILES 158" />
 			</div>
-			<p class="SiteFooter__tagline" lang="ja">
-				名古屋・西区 国道158号沿い<br />
-				車と過ごす時間のためのラウンジ。
-			</p>
+			<p class="SiteFooter__tagline" style="white-space: pre-line">{t(L, 'footer.tagline')}</p>
+			<ul class="SiteFooter__langs" aria-label="Language">
+				{#each LOCALES as loc (loc)}
+					<li><a href={switchLocalePath(page.url.pathname, loc)} class:is-active={loc === L} data-sveltekit-reload>{LOCALE_LABELS[loc]}</a></li>
+				{/each}
+			</ul>
 		</div>
 
 		<!-- Column 2: site nav -->
@@ -43,7 +49,7 @@
 			<h3 class="SiteFooter__heading">Site</h3>
 			<ul class="SiteFooter__list">
 				{#each SITE_NAV as item (item.href)}
-					<li><a href={item.href}>{item.label}</a></li>
+					<li><a href={l(L, item.href)}>{item.label}</a></li>
 				{/each}
 			</ul>
 		</nav>
@@ -67,11 +73,9 @@
 		<!-- Column 4: reservation CTA -->
 		<div class="SiteFooter__col SiteFooter__col--cta">
 			<h3 class="SiteFooter__heading">Visit Us</h3>
-			<p class="SiteFooter__note" lang="ja">
-				ご来店・試乗・ご相談はお気軽にお問い合わせください。
-			</p>
-			<a href="/reserve" class="btn-outline btn-outline--sm SiteFooter__cta" lang="ja"
-				>来店予約</a
+			<p class="SiteFooter__note">{t(L, 'footer.visitNote')}</p>
+			<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm SiteFooter__cta"
+				>{t(L, 'common.reserveCta')}</a
 			>
 		</div>
 	</div>
@@ -79,7 +83,7 @@
 	<div class="SiteFooter__bottom">
 		<ul class="SiteFooter__legal">
 			{#each LEGAL as item (item.href)}
-				<li><a href={item.href}>{item.label}</a></li>
+				<li><a href={l(L, item.href)}>{item.label}</a></li>
 			{/each}
 		</ul>
 		<p class="SiteFooter__copy">© {YEAR} MILES 158 · Nagoya, Japan</p>
@@ -224,6 +228,23 @@
 		}
 	}
 
+	.SiteFooter__langs {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		gap: var(--space-4);
+	}
+	.SiteFooter__langs a {
+		font-size: var(--fs-h6);
+		opacity: 0.55;
+		letter-spacing: 0.04em;
+	}
+	.SiteFooter__langs a.is-active {
+		opacity: 1;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
 	.SiteFooter__legal {
 		list-style: none;
 		padding: 0;

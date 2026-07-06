@@ -2,16 +2,21 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import LogoSub from './LogoSub.svelte';
+	import { l, t, LOCALES, LOCALE_LABELS, switchLocalePath, type Locale } from '$lib/i18n';
 
 	let menuOpen = $state(false);
+	let langOpen = $state(false);
 	let mode = $state<'light' | 'dark'>('light');
 	let atTop = $state(true);
+
+	const L = $derived((page.data.locale ?? 'ja') as Locale);
 
 	// On the home page, while the user is at the very top, the big Hero logo
 	// is visible — hide the fixed header so it doesn't compete with it.
 	let hidden = $derived(atTop && page.url.pathname === '/');
 
 	type Item = { label: string; href: string };
+	// Nav labels stay in brand English across locales by design.
 	const NAV: Item[] = [
 		{ label: 'Home', href: '/' },
 		{ label: 'About', href: '/about' },
@@ -66,7 +71,7 @@
 </script>
 
 <header class="SiteHeader" class:hidden data-mode={mode}>
-	<a href="/" class="SiteHeader__logo" aria-label="Home" onclick={close}>
+	<a href={l(L, '/')} class="SiteHeader__logo" aria-label="Home" onclick={close}>
 		<LogoSub width={120} title="MILES 158" />
 	</a>
 
@@ -74,15 +79,30 @@
 	<nav class="SiteHeader__nav SiteHeader__nav--desktop" aria-label="Primary">
 		<ul class="SiteHeader__links">
 			{#each NAV.filter((n) => n.href !== '/') as item (item.href)}
-				<li><a href={item.href}>{item.label}</a></li>
+				<li><a href={l(L, item.href)}>{item.label}</a></li>
 			{/each}
 		</ul>
-		<a href="/reserve" class="btn-outline btn-outline--sm" lang="ja">来店予約</a>
+		<div class="LangDD" onmouseleave={() => (langOpen = false)}>
+			<button type="button" class="LangDD__btn" aria-expanded={langOpen} aria-label="Language" onclick={() => (langOpen = !langOpen)}>
+				{LOCALE_LABELS[L]}
+				<svg class="LangDD__chev" class:is-open={langOpen} viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			</button>
+			{#if langOpen}
+				<div class="LangDD__menu">
+					<div class="LangDD__panel">
+						{#each LOCALES as loc (loc)}
+							<a href={switchLocalePath(page.url.pathname, loc)} class:is-active={loc === L} data-sveltekit-reload onclick={() => (langOpen = false)}>{LOCALE_LABELS[loc]}</a>
+						{/each}
+					</div>
+				</div>
+			{/if}
+		</div>
+		<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm">{t(L, 'common.reserveCta')}</a>
 	</nav>
 
 	<!-- Mobile nav: hamburger only. Desktop hides this entire group. -->
 	<nav class="SiteHeader__nav SiteHeader__nav--mobile" aria-label="Primary">
-		<a href="/reserve" class="btn-outline btn-outline--sm" lang="ja">来店予約</a>
+		<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm">{t(L, 'common.reserveCta')}</a>
 
 		<button
 			type="button"
@@ -107,7 +127,7 @@
 		onkeydown={(e) => e.key === 'Escape' && close()}
 	>
 		<aside class="MenuPanel" onclick={(e) => e.stopPropagation()}>
-			<a href="/" class="MenuPanel__logo" aria-label="Home" onclick={close}>
+			<a href={l(L, '/')} class="MenuPanel__logo" aria-label="Home" onclick={close}>
 				<LogoSub width={120} title="MILES 158" />
 			</a>
 
@@ -124,12 +144,20 @@
 			<nav class="MenuPanel__nav" aria-label="Site">
 				<ul>
 					{#each NAV as item (item.href)}
-						<li><a href={item.href} onclick={close}>{item.label}</a></li>
+						<li><a href={l(L, item.href)} onclick={close}>{item.label}</a></li>
 					{/each}
 				</ul>
 			</nav>
 
-			<a href="/reserve" class="btn-outline" onclick={close} lang="ja">来店予約</a>
+			<ul class="MenuPanel__langs" aria-label="Language">
+				{#each LOCALES as loc (loc)}
+					<li>
+						<a href={switchLocalePath(page.url.pathname, loc)} class:is-active={loc === L} data-sveltekit-reload onclick={close}>{LOCALE_LABELS[loc]}</a>
+					</li>
+				{/each}
+			</ul>
+
+			<a href={l(L, '/reserve')} class="btn-outline" onclick={close}>{t(L, 'common.reserveCta')}</a>
 		</aside>
 	</div>
 {/if}
@@ -227,6 +255,59 @@
 
 	.SiteHeader__links a:hover {
 		opacity: 0.7;
+	}
+
+	/* Language dropdown (desktop) */
+	.LangDD { position: relative; }
+	.LangDD__btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-size: var(--fs-h6);
+		color: inherit;
+		letter-spacing: 0.04em;
+	}
+	.LangDD__chev { width: 10px; height: 6px; transition: transform 0.25s var(--ease-default); }
+	.LangDD__chev.is-open { transform: rotate(180deg); }
+	/* padding-top keeps the 8px gap INSIDE the hover area so the menu
+	   doesn't close while the cursor crosses from button to panel */
+	.LangDD__menu { position: absolute; top: 100%; right: 0; padding-top: 8px; }
+	.LangDD__panel {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		background: var(--color-bg);
+		color: var(--c-navy);
+		border: 1px solid var(--color-line);
+		border-radius: 8px;
+		padding: 8px 14px;
+		min-width: 52px;
+	}
+	.LangDD__panel a { font-size: var(--fs-h6); color: var(--c-navy); opacity: 0.8; letter-spacing: 0.04em; }
+	.LangDD__panel a:hover { opacity: 1; }
+	.LangDD__panel a.is-active { opacity: 0.3; pointer-events: none; }
+
+	/* Language row (mobile menu panel) */
+	.MenuPanel__langs {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+	.MenuPanel__langs a {
+		font-size: var(--fs-h6);
+		opacity: 0.5;
+		transition: opacity 0.2s ease;
+	}
+	.MenuPanel__langs a.is-active {
+		opacity: 1;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+	.MenuPanel__langs a:hover {
+		opacity: 0.85;
 	}
 
 	/* Show desktop nav ≥ 768px, mobile nav below */

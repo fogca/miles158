@@ -3,5 +3,26 @@
 	"name": "miles158",
 	"compatibility_date": "2026-05-20",
 	"compatibility_flags": ["nodejs_als"],
-	"pages_build_output_dir": ".svelte-kit/cloudflare"
+	"pages_build_output_dir": ".svelte-kit/cloudflare",
+	// Non-secret config. EMAIL_PROVIDER=mock until a real provider (Resend/SES) +
+	// secrets (RESEND_API_KEY etc.) are added. Set PUBLIC_BASE_URL to the real
+	// domain in production.
+	"vars": {
+		"EMAIL_PROVIDER": "mock",
+		"EMAIL_FROM": "MILES 158 <noreply@mail.miles158.com>",
+		"EMAIL_REPLY_TO": "support@miles158.com",
+		"STAFF_NOTIFY_TO": "ops@miles158.com",
+		"PUBLIC_BASE_URL": "http://localhost:3008"
+	},
+	// D1 (SQLite at edge) — reservation persistence + inventory double-booking guard.
+	// database_id is a placeholder for local dev; replace with the real id from
+	// `wrangler d1 create miles158-db` before remote deploy.
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "miles158-db",
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"migrations_dir": "migrations"
+		}
+	]
 }

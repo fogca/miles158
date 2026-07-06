@@ -2,7 +2,9 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
+	import { page } from '$app/state';
 	import SiteHeader from '$lib/components/SiteHeader.svelte';
+	import { reloadFontplus, watchFontplus } from '$lib/fontplus';
 	import SiteFooter from '$lib/components/SiteFooter.svelte';
 	import faviconSvg from '$lib/assets/favicon.svg';
 	import faviconPng from '$lib/assets/favicon.png';
@@ -10,10 +12,21 @@
 
 	let { children } = $props();
 
+	// The dashboard is an app shell — no marketing chrome or smooth-scroll.
+	const isAdmin = $derived(page.url.pathname.startsWith('/dashboard'));
+	$effect(() => {
+		if (isAdmin && lenis) {
+			lenis.destroy();
+			lenis = null;
+		}
+	});
+
 	// Reset scroll to top on every navigation (Home / sub-page).
 	// Lenis keeps its own internal scroll position, so we must tell it explicitly.
-	afterNavigate(() => {
+	afterNavigate((nav) => {
 		if (!browser) return;
+		// FontPlus must re-subset after every SPA render (ja/zh glyphs).
+		reloadFontplus(nav.type === 'enter');
 		if (lenis) {
 			lenis.scrollTo(0, { immediate: true });
 		} else {
@@ -28,7 +41,7 @@
 	// Without this, on hard reload children race the layout: a child trigger gets
 	// created against native scroll BEFORE we register scrollerProxy + defaults,
 	// then on first scroll pins fire in the wrong order and sections jump.
-	if (browser) {
+	if (browser && !window.location.pathname.startsWith('/dashboard')) {
 		let resolveReady: () => void = () => {};
 		const scrollReady = new Promise<void>((r) => (resolveReady = r));
 		(window as Window & { __scrollReady?: Promise<void> }).__scrollReady = scrollReady;
@@ -195,7 +208,11 @@
 	}
 
 	onMount(() => {
+		// Catch dynamic (non-navigation) text changes — form results, client-side
+		// calendar swaps — so FontPlus re-subsets them too.
+		const stopFontplusWatch = watchFontplus();
 		return () => {
+			stopFontplusWatch();
 			if (tickerFn) {
 				import('gsap').then(({ gsap }) => gsap.ticker.remove(tickerFn!));
 			}
@@ -259,8 +276,12 @@
 	></script>
 </svelte:head>
 
-<SiteHeader />
+{#if !isAdmin}
+	<SiteHeader />
+{/if}
 
 {@render children()}
 
-<SiteFooter />
+{#if !isAdmin}
+	<SiteFooter />
+{/if}

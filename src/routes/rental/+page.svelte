@@ -1,13 +1,13 @@
 <script lang="ts">
-	import {
-		services,
-		cars,
-		rentalPricing,
-		rentalFlow,
-		rentalConditions
-	} from '$lib/data/content';
+	import { page } from '$app/state';
+	import { cars, rentalPricing } from '$lib/data/content';
+	import { getServices, getRentalFlow, getRentalConditions, localizeRate } from '$lib/i18n/marketing';
+	import { t, type Locale } from '$lib/i18n';
 
-	const service = services.find((s) => s.id === 'rental')!;
+	const L = (page.data.locale ?? 'ja') as Locale;
+	const rentalFlow2 = getRentalFlow(L);
+	const rentalConditions2 = getRentalConditions(L);
+	const service = getServices(L).find((s) => s.id === 'rental')!;
 
 	// Join cars[] with rentalPricing[] so the template can render in car-order
 	// while pulling rates from the pricing registry.
@@ -46,14 +46,14 @@
 		<section class="Rental__block Rental__split Rental__hero section">
 			<h1 class="section-title Rental__split-title">Car Rental</h1>
 			<div class="Rental__split-body">
-				<p class="Rental__lead" lang="ja">{service.description}</p>
+				<p class="Rental__lead">{service.description}</p>
 			</div>
 		</section>
 		<!-- Lineup + pricing -->
 		<section class="Rental__block Rental__split Rental__lineup section">
 			<header class="Rental__section-head">
 				<p class="Rental__eyebrow">Lineup &amp; Pricing</p>
-				<h2 class="section-title Rental__split-title" lang="ja">取扱車両と料金</h2>
+				<h2 class="section-title Rental__split-title" >{t(L, 'rental.lineup')}</h2>
 			</header>
 
 			<div class="Rental__split-body">
@@ -76,21 +76,21 @@
 										<div class="Rental__rate">
 											<dt class="Rental__rate-label">
 												<span class="Rental__rate-en" lang="en">{rate.label}</span>
-												<span class="Rental__rate-ja" lang="ja">{rate.labelJa}</span>
+												<span class="Rental__rate-ja" >{localizeRate(L, rate).labelJa}</span>
 											</dt>
 											<dd class="Rental__rate-value">
 												<span class="Rental__rate-price">{rate.price}</span>
-												{#if rate.note}
-													<span class="Rental__rate-note">{rate.note}</span>
+												{#if localizeRate(L, rate).note}
+													<span class="Rental__rate-note">{localizeRate(L, rate).note}</span>
 												{/if}
 											</dd>
 										</div>
 									{/each}
 								</dl>
 							{:else}
-								<p class="Rental__coming-soon" lang="ja">
+								<p class="Rental__coming-soon">
 									<span class="Rental__coming-badge">Coming Soon</span>
-									料金・受付開始時期は準備中です。
+									{t(L, 'rental.comingSoon')}
 								</p>
 							{/if}
 						</div>
@@ -104,20 +104,20 @@
 		<section class="Rental__block Rental__split Rental__flow section">
 			<header class="Rental__section-head">
 				<p class="Rental__eyebrow">How to Rent</p>
-				<h2 class="section-title Rental__split-title" lang="ja">ご利用フロー</h2>
+				<h2 class="section-title Rental__split-title" >{t(L, 'rental.flow')}</h2>
 			</header>
 
 			<div class="Rental__split-body">
 				<ol class="Rental__steps">
-					{#each rentalFlow as step (step.number)}
+					{#each rentalFlow2 as step (step.number)}
 						<li class="Rental__step">
 							<p class="Rental__step-num" lang="en">{step.number}</p>
 							<div class="Rental__step-body">
 								<h3 class="Rental__step-title">
 									<span lang="en">{step.title}</span>
-									<span class="Rental__step-title-ja" lang="ja">／ {step.titleJa}</span>
+									<span class="Rental__step-title-ja">／ {step.titleJa}</span>
 								</h3>
-								<p class="Rental__step-text" lang="ja">{step.body}</p>
+								<p class="Rental__step-text">{step.body}</p>
 							</div>
 						</li>
 					{/each}
@@ -129,33 +129,33 @@
 		<section class="Rental__block Rental__split Rental__conditions section">
 			<header class="Rental__section-head">
 				<p class="Rental__eyebrow">Requirements</p>
-				<h2 class="section-title Rental__split-title" lang="ja">必要書類とご利用条件</h2>
+				<h2 class="section-title Rental__split-title" >{t(L, 'rental.conditions')}</h2>
 			</header>
 
 			<div class="Rental__split-body">
 				<div class="Rental__cond-grid">
 					<div class="Rental__cond">
-						<h3 class="Rental__cond-title" lang="ja">必要書類</h3>
+						<h3 class="Rental__cond-title" >{t(L, 'rental.docs')}</h3>
 						<ul class="Rental__cond-list">
-							{#each rentalConditions.documents as item}
-								<li lang="ja">{item}</li>
+							{#each rentalConditions2.documents as item}
+								<li>{item}</li>
 							{/each}
 						</ul>
 					</div>
 
 					<div class="Rental__cond">
-						<h3 class="Rental__cond-title" lang="ja">ご利用条件</h3>
+						<h3 class="Rental__cond-title" >{t(L, 'rental.reqs')}</h3>
 						<ul class="Rental__cond-list">
-							{#each rentalConditions.requirements as item}
-								<li lang="ja">{item}</li>
+							{#each rentalConditions2.requirements as item}
+								<li>{item}</li>
 							{/each}
 						</ul>
 					</div>
 				</div>
 
 				<ul class="Rental__notes">
-					{#each rentalConditions.notes as note}
-						<li lang="ja">※ {note}</li>
+					{#each rentalConditions2.notes as note}
+						<li>※ {note}</li>
 					{/each}
 				</ul>
 			</div>
