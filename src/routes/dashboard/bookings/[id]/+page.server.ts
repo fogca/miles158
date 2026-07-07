@@ -11,6 +11,7 @@ import { loadCancellationRules } from '$lib/server/pricing-data';
 import { calcCancellationFee } from '$lib/cancellation/policy';
 import { getPaymentProvider } from '$lib/server/payment';
 import { sendEmail, buildBookingEmailData, type EmailEnv } from '$lib/server/email';
+import { calcMileageOverage } from '$lib/pricing/mileage';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, platform }) => {
@@ -35,6 +36,24 @@ export const actions: Actions = {
 		}
 		const notes = form.get('notes');
 		if (notes) patch.notes = String(notes);
+
+		// Auto-calc mileage overage (300km/day allowance, ¥55/km beyond) on return.
+		if (to === 'returned') {
+			const current = await loadReservation(db, params.id);
+			const startKm = (patch.mileage_start_km as number | undefined) ?? current?.mileage_start_km ?? null;
+			const endKm = (patch.mileage_end_km as number | undefined) ?? null;
+			const rentalDays = current?.price_snapshot
+				? (JSON.parse(current.price_snapshot) as { rentalDays?: number }).rentalDays
+				: undefined;
+			if (rentalDays != null) {
+				const overage = calcMileageOverage(rentalDays, startKm as number | null, endKm);
+				if (overage) {
+					patch.mileage_overage_km = overage.overageKm;
+					patch.mileage_overage_amount = overage.overageAmount;
+				}
+			}
+		}
+
 		try {
 			await transitionReservation(db, {
 				reservationId: params.id,

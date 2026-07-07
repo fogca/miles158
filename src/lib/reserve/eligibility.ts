@@ -29,7 +29,7 @@ export const LICENSE_OPTIONS: LicenseOption[] = [
 			'zh-Hans': '日本驾照',
 			'zh-Hant': '日本駕照'
 		},
-		requiredDocs: ['運転免許証（取得から1年以上経過）', '本人確認書類']
+		requiredDocs: ['運転免許証（取得から3年以上経過）', '本人確認書類']
 	},
 	{
 		kind: 'idp_geneva',
@@ -94,10 +94,10 @@ export function blockMessage(locale: SiteLocale): string {
 }
 
 const DOCS_I18N: Record<string, Record<SiteLocale, string>> = {
-	'運転免許証（取得から1年以上経過）': {
-		ja: '運転免許証（取得から1年以上経過）',
-		en: 'Driver’s license (held for 1+ year)',
-		zh: '驾照（取得满 1 年以上）'
+	'運転免許証（取得から3年以上経過）': {
+		ja: '運転免許証（取得から3年以上経過）',
+		en: 'Driver’s license (held for 3+ years)',
+		zh: '驾照（取得满 3 年以上）'
 	},
 	本人確認書類: { ja: '本人確認書類', en: 'ID showing your address', zh: '身份证明文件' },
 	'国際運転免許証(IDP)': { ja: '国際運転免許証(IDP)', en: 'International Driving Permit (IDP)', zh: '国际驾照（IDP）' },

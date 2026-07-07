@@ -77,7 +77,8 @@ function bookingConfirmation(d: TemplateData): RenderedEmail {
 		h2('キャンセル規定（レンタル基本料金に対して）') +
 		kv(cancelRows) +
 		h2('ご来店時にご用意いただくもの') +
-		`<ul style="font-size:13px;line-height:1.8;margin:0 0 12px;padding-left:1.2em;color:#333;"><li>運転免許証（取得から1年以上）</li><li>保証金確認用のクレジットカード</li><li>外国籍の方：パスポート・有効な運転資格書類</li></ul>` +
+		`<ul style="font-size:13px;line-height:1.8;margin:0 0 12px;padding-left:1.2em;color:#333;"><li>運転免許証（取得から3年以上）</li><li>保証金確認用のクレジットカード</li><li>外国籍の方：パスポート・有効な運転資格書類</li></ul>` +
+		p(`<span style="color:#5a6472;font-size:12px;">走行距離は1日300kmまで含み、超過分は1kmにつき¥55を申し受けます。</span>`) +
 		cta(`${d.baseUrl}/reserve/${d.reservationCode}`, '予約内容を確認する') +
 		p(`<span style="color:#5a6472;font-size:12px;">ご来店は ${officeLabel(d.pickupOffice)} にて承ります。ご不明点はお気軽にお問い合わせください。</span>`);
 
@@ -96,9 +97,11 @@ function bookingConfirmation(d: TemplateData): RenderedEmail {
 ${cancelRows.map(([k, v]) => `  ${k}: ${v}`).join('\n')}
 
 ［ご来店時にご用意いただくもの］
-  ・運転免許証（取得から1年以上）
+  ・運転免許証（取得から3年以上）
   ・保証金確認用のクレジットカード
   ・外国籍の方：パスポート・有効な運転資格書類
+
+走行距離は1日300kmまで含み、超過分は1kmにつき¥55を申し受けます。
 
 予約内容の確認: ${d.baseUrl}/reserve/${d.reservationCode}
 ${footerText(d.baseUrl)}`;

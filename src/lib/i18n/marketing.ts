@@ -124,7 +124,7 @@ export function getRentalFlow(locale: Locale): FlowStep[] {
 const COND: Record<Exclude<Locale, 'ja'>, typeof condJa> = {
 	en: {
 		documents: [
-			'Driver’s license (held for 1+ year)',
+			'Driver’s license (held for 3+ years)',
 			'ID showing your current address',
 			'Credit card (for the security deposit hold)'
 		],
@@ -132,18 +132,18 @@ const COND: Record<Exclude<Locale, 'ja'>, typeof condJa> = {
 		notes: [
 			'Some photos are for illustration and may differ from the actual car.',
 			'All prices exclude tax. Consumption tax and a deposit (card hold) apply separately.',
-			'Extra fees apply beyond the mileage / fuel (full-to-full) policy.',
+			'Mileage includes 300km per day; excess is billed at ¥55/km. Extra fees also apply beyond the fuel (full-to-full) policy.',
 			'Delivery/collection is available; distant locations may incur a delivery fee.',
 			'In case of accident or damage, costs may apply per the insurance / NOC policy — see “Insurance & Coverage”.'
 		]
 	},
 	zh: {
-		documents: ['驾照（取得满 1 年以上）', '可确认现住址的身份证件', '信用卡（用于押金预授权）'],
+		documents: ['驾照（取得满 3 年以上）', '可确认现住址的身份证件', '信用卡（用于押金预授权）'],
 		requirements: ['年满 25 周岁', '持有可在日本驾驶的有效资格', '全车禁烟，敬请配合'],
 		notes: [
 			'部分图片仅供参考，可能与实际车辆・配置不同。',
 			'所示价格均不含税；消费税及押金（信用卡预授权）另计。',
-			'超出里程规定或未满油归还时，将另行收费。',
+			'每日含 300km 里程，超出部分按每公里 ¥55 收费；未满油归还时也将另行收费。',
 			'可提供送取车服务，远距离将产生配送费用。',
 			'如发生事故・损伤，将依保险与 NOC（营业损失补偿）规定承担相应费用，详见「保险・保障」页面。'
 		]

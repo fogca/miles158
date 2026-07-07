@@ -61,6 +61,7 @@
 				<div class="KV__total"><dt>{t(L,'dt.kTotal')}</dt><dd>{formatJpy(r.total_amount ?? 0)}</dd></div>
 				<div><dt>{t(L,'dt.kDeposit')}</dt><dd>{formatJpy(r.deposit_amount ?? 0)}</dd></div>
 				{#if (r.cancellation_fee ?? 0) > 0}<div><dt>{t(L,'dt.kCancelFee')}</dt><dd>{formatJpy(r.cancellation_fee ?? 0)}</dd></div>{/if}
+				{#if r.mileage_overage_amount != null}<div><dt>{t(L,'dt.kMileageOverage')}</dt><dd>{r.mileage_overage_km} km / {formatJpy(r.mileage_overage_amount)}</dd></div>{/if}
 			</dl>
 			{#if data.detail.options.length}
 				<ul class="Opts">

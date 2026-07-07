@@ -246,8 +246,9 @@ a {
 }
 
 :lang(ja) {
-	--heading-font: var(--font-ja);
-	--text-font: var(--font-ja);
+	/* Latin stays Arizona; Japanese falls through to Tazugane */
+	--heading-font: 'ABC Arizona Flare', var(--font-ja);
+	--text-font: 'ABC Arizona Flare', var(--font-ja);
 	font-weight: 500;
 }
 

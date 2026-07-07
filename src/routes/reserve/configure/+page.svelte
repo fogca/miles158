@@ -130,6 +130,7 @@
 						<div class="Cfg__sum-total"><dt>{t(L, 'cfg.total')}</dt><dd>{formatJpy(total)}</dd></div>
 					</dl>
 					<p class="Cfg__deposit">{t(L, 'cfg.depositNote', { dep: formatJpy(data.depositAmount) })}</p>
+					<p class="Cfg__deposit">{t(L, 'cfg.mileageNote')}</p>
 
 					{#if form?.message}<p class="Cfg__error">{form.message}</p>{/if}
 					<button type="submit" class="btn-outline Cfg__submit">{t(L, 'cfg.submit')}</button>

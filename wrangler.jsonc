@@ -15,13 +15,11 @@
 		"PUBLIC_BASE_URL": "http://localhost:3008"
 	},
 	// D1 (SQLite at edge) — reservation persistence + inventory double-booking guard.
-	// database_id is a placeholder for local dev; replace with the real id from
-	// `wrangler d1 create miles158-db` before remote deploy.
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "miles158-db",
-			"database_id": "00000000-0000-0000-0000-000000000000",
+			"database_id": "365c5e52-48fd-40af-b4b5-9c1b5f0e5f8e",
 			"migrations_dir": "migrations"
 		}
 	]

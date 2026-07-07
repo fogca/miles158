@@ -29,6 +29,8 @@ export interface ReservationRow {
 	cancellation_policy_id: string | null;
 	cdw_selected: number;
 	noc_waiver_purchased: number;
+	mileage_overage_km: number | null;
+	mileage_overage_amount: number | null;
 	price_snapshot: string | null;
 	held_expires_at: string | null;
 	[key: string]: unknown;
@@ -52,6 +54,8 @@ const PATCH_COLS = new Set([
 	'cancellation_fee',
 	'mileage_start_km',
 	'mileage_end_km',
+	'mileage_overage_km',
+	'mileage_overage_amount',
 	'fuel_start',
 	'fuel_end',
 	'accident_notes',

@@ -217,6 +217,11 @@ export const dict = {
 		en: 'A {dep} deposit is held on your card and released after return.',
 		zh: '另以信用卡预授权冻结押金 {dep}，还车后解除。'
 	},
+	'cfg.mileageNote': {
+		ja: '走行距離は1日300kmまで含み、超過分は1kmにつき¥55を申し受けます。',
+		en: 'Mileage includes 300km per day; excess is billed at ¥55/km.',
+		zh: '每日含 300km 里程，超出部分按每公里 ¥55 收费。'
+	},
 	'cfg.submit': { ja: '確認画面へ進む', en: 'Continue to payment', zh: '前往支付' },
 	'cfg.back': { ja: '← 車両選択に戻る', en: '← Back to car selection', zh: '← 返回选择车辆' },
 	'cfg.errRequired': { ja: '必須項目をすべてご入力ください。', en: 'Please fill in all required fields.', zh: '请填写所有必填项。' },
@@ -364,6 +369,11 @@ export const dict = {
 	'dt.kTotal': { ja: '合計', en: 'Total', zh: '合计' },
 	'dt.kDeposit': { ja: '保証金', en: 'Deposit', zh: '押金' },
 	'dt.kCancelFee': { ja: 'キャンセル料', en: 'Cancellation fee', zh: '取消费' },
+	'dt.kMileageOverage': {
+		ja: '走行距離超過（1日300km・超過¥55/km）',
+		en: 'Mileage overage (300km/day incl., ¥55/km beyond)',
+		zh: '超里程费（每日含 300km・超出 ¥55/km）'
+	},
 	'dt.none': { ja: 'なし', en: 'None', zh: '无' },
 	'dt.unregistered': { ja: '未登録', en: 'Not registered', zh: '未登记' },
 	'dt.noActions': { ja: 'この予約に対する操作はありません。', en: 'No actions available for this booking.', zh: '该预约当前没有可执行的操作。' },
