@@ -12,6 +12,19 @@ const DEFAULT_PICKUP_TIME = '10:00';
 const DEFAULT_RETURN_TIME = '20:00';
 const AVAILABILITY_DAYS = 120; // how far ahead the calendar shows
 const MIN_LEAD_DAYS = 3; // online bookings accepted up to 3 days before pickup
+// Business hours for pickup/return wall-clock times (same range the UI offers).
+const TIME_MIN = '10:00';
+const TIME_MAX = '20:00';
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+/** Server-side guard for form-supplied times: valid HH:MM within business hours,
+ *  otherwise fall back to the default. Keeps billed hours and slot days in sync. */
+function sanitizeTime(raw: FormDataEntryValue | null, fallback: string): string {
+	const v = String(raw ?? '').trim();
+	if (!TIME_RE.test(v)) return fallback;
+	if (v < TIME_MIN || v > TIME_MAX) return fallback;
+	return v;
+}
 
 export const load: PageServerLoad = async ({ url, platform, locals }) => {
 	const db = getDb(platform);
@@ -107,9 +120,9 @@ export const actions: Actions = {
 		const vehicleId = String(form.get('vehicleId') ?? '');
 		const classId = String(form.get('classId') ?? '');
 		const pickupDate = String(form.get('pickupDate') ?? '');
-		const pickupTime = String(form.get('pickupTime') ?? DEFAULT_PICKUP_TIME);
+		const pickupTime = sanitizeTime(form.get('pickupTime'), DEFAULT_PICKUP_TIME);
 		const returnDate = String(form.get('returnDate') ?? '');
-		const returnTime = String(form.get('returnTime') ?? DEFAULT_RETURN_TIME);
+		const returnTime = sanitizeTime(form.get('returnTime'), DEFAULT_RETURN_TIME);
 
 		if (!isEligible(licenseKind)) {
 			return fail(400, { message: t(locale, 'rsv.errIneligible') });

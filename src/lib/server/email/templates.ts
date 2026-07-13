@@ -61,7 +61,8 @@ function bookingConfirmation(d: TemplateData): RenderedEmail {
 	const rules = d.cancellationRules ?? [];
 	const cancelRows: [string, string][] = [
 		...rules.map((r) => [intervalLabel(r.hoursBeforeMin, r.hoursBeforeMax), `${r.feePercent}%`] as [string, string]),
-		['無連絡不来店', '100%']
+		// Keep in sync with cancellation_policies.no_show_fee_percent (migration 0013).
+		['無連絡不来店', '50%']
 	];
 	const inner =
 		p(`${d.customerName} 様`) +
@@ -201,15 +202,34 @@ ${d.adminUrl ? `\n管理画面: ${d.adminUrl}` : ''}`;
 	return { subject, html: shell('新規予約', inner, d.baseUrl), text };
 }
 
-export function renderEmail(kind: EmailKind, _locale: Locale, data: TemplateData): RenderedEmail {
+// Interim i18n: body copy stays ja for now. For en/zh customers we prepend a
+// short notice stating that the Japanese text is the official record.
+const LOCALE_NOTICE: Record<'en' | 'zh', string> = {
+	en: 'This is a notification about your MILES 158 reservation. The Japanese text below is the official record.',
+	zh: '这是关于您 MILES 158 预订的通知。以下日文内容为正式记录。'
+};
+
+function withLocaleNotice(rendered: RenderedEmail, locale: Locale): RenderedEmail {
+	if (locale !== 'en' && locale !== 'zh') return rendered;
+	const notice = LOCALE_NOTICE[locale];
+	const noticeHtml = `<p style="font-size:13px;line-height:1.7;margin:0 0 16px;padding:10px 14px;background:#f0f4f8;border-radius:6px;color:#33404f;">${notice}</p>`;
+	return {
+		subject: rendered.subject,
+		// Insert right after the heading inside the shell.
+		html: rendered.html.replace('</h1>', `</h1>\n${noticeHtml}`),
+		text: `${notice}\n\n${rendered.text}`
+	};
+}
+
+export function renderEmail(kind: EmailKind, locale: Locale, data: TemplateData): RenderedEmail {
 	switch (kind) {
 		case 'booking_confirmation':
-			return bookingConfirmation(data);
+			return withLocaleNotice(bookingConfirmation(data), locale);
 		case 'cancellation':
-			return cancellation(data);
+			return withLocaleNotice(cancellation(data), locale);
 		case 'reminder':
-			return reminder(data);
+			return withLocaleNotice(reminder(data), locale);
 		case 'staff_new_booking':
-			return staffNewBooking(data);
+			return staffNewBooking(data); // staff mail is always ja
 	}
 }

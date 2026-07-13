@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import LogoSub from './LogoSub.svelte';
-	import { l, t, LOCALES, LOCALE_LABELS, switchLocalePath, type Locale } from '$lib/i18n';
+	import { l, t, LOCALES, LOCALE_LABELS, switchLocalePath, localeFromPath, type Locale } from '$lib/i18n';
 
 	let menuOpen = $state(false);
 	let langOpen = $state(false);
@@ -11,9 +11,14 @@
 
 	const L = $derived((page.data.locale ?? 'ja') as Locale);
 
+	// Home detection must ignore the /en /zh locale prefix so the hero-time
+	// header behaviour matches on every locale's home page.
+	const isHomePath = (pathname: string) =>
+		pathname === '/' || pathname === `/${localeFromPath(pathname)}`;
+
 	// On the home page, while the user is at the very top, the big Hero logo
 	// is visible — hide the fixed header so it doesn't compete with it.
-	let hidden = $derived(atTop && page.url.pathname === '/');
+	let hidden = $derived(atTop && isHomePath(page.url.pathname));
 
 	type Item = { label: string; href: string };
 	// Nav labels stay in brand English across locales by design.
@@ -56,7 +61,7 @@
 				// On home, bottom hero content starts fading in at scroll progress 0.15
 				// (= 30vh given the 300vh scrollDistance / 200vh sticky range).
 				// Reveal the header at the same scroll point so they appear together.
-				const isHome = page.url.pathname === '/';
+				const isHome = isHomePath(page.url.pathname);
 				const threshold = isHome ? window.innerHeight * 0.3 : 60;
 				const top = window.scrollY < threshold;
 				if (top !== atTop) atTop = top;
@@ -91,7 +96,7 @@
 				<div class="LangDD__menu">
 					<div class="LangDD__panel">
 						{#each LOCALES as loc (loc)}
-							<a href={switchLocalePath(page.url.pathname, loc)} class:is-active={loc === L} data-sveltekit-reload onclick={() => (langOpen = false)}>{LOCALE_LABELS[loc]}</a>
+							<a href={switchLocalePath(page.url.pathname, loc) + page.url.search + page.url.hash} class:is-active={loc === L} data-sveltekit-reload onclick={() => (langOpen = false)}>{LOCALE_LABELS[loc]}</a>
 						{/each}
 					</div>
 				</div>
@@ -152,7 +157,7 @@
 			<ul class="MenuPanel__langs" aria-label="Language">
 				{#each LOCALES as loc (loc)}
 					<li>
-						<a href={switchLocalePath(page.url.pathname, loc)} class:is-active={loc === L} data-sveltekit-reload onclick={close}>{LOCALE_LABELS[loc]}</a>
+						<a href={switchLocalePath(page.url.pathname, loc) + page.url.search + page.url.hash} class:is-active={loc === L} data-sveltekit-reload onclick={close}>{LOCALE_LABELS[loc]}</a>
 					</li>
 				{/each}
 			</ul>

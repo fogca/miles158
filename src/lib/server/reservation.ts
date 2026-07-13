@@ -4,8 +4,7 @@
 
 import { genId, type DB } from './db';
 import { nowIso } from '$lib/time';
-import { assertTransition, type ReservationState } from '$lib/booking/states';
-import { auditStmt } from './audit';
+import { assertTransition, InvalidTransitionError, type ReservationState } from '$lib/booking/states';
 
 export interface ReservationRow {
 	id: string;
@@ -118,41 +117,88 @@ export async function transitionReservation(
 		vals.push(v);
 		appliedPatch[k] = v;
 	}
-	vals.push(params.reservationId);
+	vals.push(params.reservationId, from);
 
+	// TOCTOU guard: every statement is conditioned on the row still being in
+	// `from` when the batch runs, so a lost race writes nothing (no phantom
+	// history/audit rows, no premature slot release). Statement order matters:
+	// the gated INSERTs/DELETE run before the UPDATE flips the status.
+	const guard = `EXISTS (SELECT 1 FROM reservations WHERE id = ? AND status = ?)`;
 	const stmts = [
-		db.prepare(`UPDATE reservations SET ${sets.join(', ')} WHERE id = ?`).bind(...vals),
 		db
 			.prepare(
 				`INSERT INTO reservation_status_history (id, reservation_id, from_status, to_status, triggered_by, reason, created_at)
-				 VALUES (?, ?, ?, ?, ?, ?, ?)`
+				 SELECT ?, ?, ?, ?, ?, ?, ? WHERE ${guard}`
 			)
-			.bind(genId(), params.reservationId, from, params.to, params.actor, params.reason ?? null, now),
-		auditStmt(db, {
-			actor: params.actor,
-			action: 'reservation.transition',
-			entity: 'reservation',
-			entityId: params.reservationId,
-			before: { status: from },
-			after: { status: params.to, ...appliedPatch },
-			ip: params.ip
-		})
+			.bind(
+				genId(),
+				params.reservationId,
+				from,
+				params.to,
+				params.actor,
+				params.reason ?? null,
+				now,
+				params.reservationId,
+				from
+			),
+		db
+			.prepare(
+				`INSERT INTO audit_log (id, actor, action, entity, entity_id, before, after, ip, created_at)
+				 SELECT ?, ?, 'reservation.transition', 'reservation', ?, ?, ?, ?, ? WHERE ${guard}`
+			)
+			.bind(
+				genId(),
+				params.actor,
+				params.reservationId,
+				JSON.stringify({ status: from }),
+				JSON.stringify({ status: params.to, ...appliedPatch }),
+				params.ip ?? null,
+				now,
+				params.reservationId,
+				from
+			)
 	];
 
 	// Free inventory when the booking ends without a rental.
 	if (params.to === 'cancelled' || params.to === 'no_show') {
 		stmts.push(
-			db.prepare('DELETE FROM reservation_days WHERE reservation_id = ?').bind(params.reservationId)
+			db
+				.prepare(`DELETE FROM reservation_days WHERE reservation_id = ? AND ${guard}`)
+				.bind(params.reservationId, params.reservationId, from)
 		);
 	}
 
+	// Conditional UPDATE last: only fires while status is still `from`.
+	stmts.push(
+		db.prepare(`UPDATE reservations SET ${sets.join(', ')} WHERE id = ? AND status = ?`).bind(...vals)
+	);
+
 	await db.batch(stmts);
+
+	// Post-verify: D1 offers no interactive transactions, so confirm the row
+	// actually reached the target state; otherwise a concurrent writer won.
+	const after = await db
+		.prepare('SELECT status FROM reservations WHERE id = ?')
+		.bind(params.reservationId)
+		.first<{ status: ReservationState }>();
+	if (after?.status !== params.to) {
+		throw new InvalidTransitionError(from, params.to);
+	}
+
 	return { ...current, status: params.to, ...appliedPatch };
 }
 
 export interface ReservationDetail {
 	reservation: ReservationRow;
-	options: Array<{ option_id: string; quantity: number; line_amount: number; name_ja: string; pricing_type: string }>;
+	options: Array<{
+		option_id: string;
+		quantity: number;
+		line_amount: number;
+		name_ja: string;
+		name_en: string | null;
+		name_zh_hans: string | null;
+		pricing_type: string;
+	}>;
 	history: Array<{ from_status: string | null; to_status: string; triggered_by: string; reason: string | null; created_at: string }>;
 	payments: Array<Record<string, unknown>>;
 	days: Array<{ date: string; type: string }>;
@@ -168,7 +214,7 @@ export async function getReservationDetail(db: DB, id: string): Promise<Reservat
 	const [options, history, payments, days, vehicle, customer] = await Promise.all([
 		db
 			.prepare(
-				`SELECT bo.option_id, bo.quantity, bo.line_amount, bo.pricing_type, oc.name_ja
+				`SELECT bo.option_id, bo.quantity, bo.line_amount, bo.pricing_type, oc.name_ja, oc.name_en, oc.name_zh_hans
 				 FROM booking_options bo JOIN option_catalog oc ON oc.id = bo.option_id
 				 WHERE bo.reservation_id = ?`
 			)

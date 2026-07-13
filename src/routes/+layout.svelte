@@ -9,8 +9,21 @@
 	import faviconSvg from '$lib/assets/favicon.svg';
 	import faviconPng from '$lib/assets/favicon.png';
 	import ogpImage from '$lib/assets/OGP.png';
+	import { LOCALES, switchLocalePath, type Locale } from '$lib/i18n';
 
 	let { children } = $props();
+
+	// ---- SEO: locale-aware canonical / hreflang / og:locale ----
+	const SITE_ORIGIN = 'https://miles158.pages.dev';
+	const L = $derived((page.data.locale ?? 'ja') as Locale);
+	const canonicalUrl = $derived(SITE_ORIGIN + page.url.pathname);
+	const OG_LOCALE: Record<Locale, string> = { ja: 'ja_JP', en: 'en_US', zh: 'zh_CN' };
+	const alternates = $derived(
+		LOCALES.map((loc) => ({
+			hreflang: loc,
+			href: SITE_ORIGIN + switchLocalePath(page.url.pathname, loc)
+		}))
+	);
 
 	// The dashboard is an app shell — no marketing chrome or smooth-scroll.
 	const isAdmin = $derived(page.url.pathname.startsWith('/dashboard'));
@@ -223,37 +236,27 @@
 </script>
 
 <svelte:head>
-	<title>MILES 158 — Car Service Brand · Nagoya</title>
-	<meta
-		name="description"
-		content="MILES 158 — 名古屋・西区に生まれた車好きのためのカーラウンジ。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンス。"
-	/>
-
+	<!-- Title & description live on each page's <svelte:head>; the layout only
+	     carries page-independent tags so nothing is emitted twice. -->
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="MILES 158" />
-	<meta property="og:title" content="MILES 158 — Car Service Brand · Nagoya" />
-	<meta
-		property="og:description"
-		content="名古屋・西区に生まれた車好きのためのカーラウンジ。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンス。"
-	/>
 	<meta property="og:image" content={ogpImage} />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
-	<meta property="og:locale" content="ja_JP" />
+	<meta property="og:locale" content={OG_LOCALE[L]} />
 
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="MILES 158" />
-	<meta
-		name="twitter:description"
-		content="名古屋・西区の車好きのためのカーラウンジ。"
-	/>
 	<meta name="twitter:image" content={ogpImage} />
 
 	<link rel="icon" type="image/svg+xml" href={faviconSvg} />
 	<link rel="icon" type="image/png" href={faviconPng} />
 	<link rel="apple-touch-icon" href={faviconPng} />
 
-	<link rel="canonical" href="https://miles158.pages.dev/" />
+	<link rel="canonical" href={canonicalUrl} />
+	{#each alternates as alt (alt.hreflang)}
+		<link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+	{/each}
+	<link rel="alternate" hreflang="x-default" href={SITE_ORIGIN + switchLocalePath(page.url.pathname, 'ja')} />
 
 	<link
 		rel="preload"

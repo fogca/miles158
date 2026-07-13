@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { formatJpy, formatJst } from '$lib/time';
 	import { statusLabel } from '$lib/booking/labels';
-	import { t, type Locale } from '$lib/i18n';
+	import { t, pickLoc, type Locale } from '$lib/i18n';
 	import type { PageData, ActionData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -66,7 +66,7 @@
 			{#if data.detail.options.length}
 				<ul class="Opts">
 					{#each data.detail.options as o}
-						<li>{o.name_ja} ×{o.quantity} — {formatJpy(o.line_amount)}</li>
+						<li>{pickLoc(o, L)} ×{o.quantity} — {formatJpy(o.line_amount)}</li>
 					{/each}
 				</ul>
 			{/if}

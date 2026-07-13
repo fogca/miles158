@@ -18,7 +18,7 @@
 		<dt>電話番号</dt>
 		<dd><span class="placeholder">要記入</span>（受付時間：<span class="placeholder">要記入</span>）</dd>
 		<dt>メールアドレス</dt>
-		<dd>info@miles158.jp</dd>
+		<dd>hi@miles158.com</dd>
 		<dt>販売価格</dt>
 		<dd>各車両・予約ページに表示する金額（消費税込み）。別途、保証金を与信枠として確保します。</dd>
 		<dt>商品代金以外の必要料金</dt>
@@ -34,5 +34,5 @@
 			キャンセル料は<a href="/terms">貸渡約款</a>第4条に基づきます。返金は、ご利用のお支払い方法に応じて所定の期間内に行います。
 		</dd>
 	</dl>
-	<p class="placeholder">※ 本ページは雛形です。サイト公開前に事業者情報を確定してください。</p>
+	<p class="placeholder">※ 事業者情報は確定次第、順次更新いたします。</p>
 </LegalPage>

@@ -40,8 +40,8 @@
 	<aside class="Add">
 		<h2>{t(L, 'vh.addTitle')}</h2>
 		<form method="POST" action="?/create" use:enhance class="AddForm">
-			<label>{t(L,'vh.fName')}<input name="display_name" required placeholder="Lexus LC500" /></label>
-			<label>{t(L,'vh.fSubtitle')}<input name="subtitle" placeholder="Grand Tourer · V8 Coupé" /></label>
+			<label>{t(L,'vh.fName')}<input name="display_name" required placeholder="Land Cruiser FJ VX" /></label>
+			<label>{t(L,'vh.fSubtitle')}<input name="subtitle" placeholder="Heritage Tourer · 2.7L 4WD" /></label>
 			<label>{t(L,'vh.fClass')}<select name="class_id" required>{#each data.classes as c}<option value={c.id}>{c.name_ja}</option>{/each}</select></label>
 			<label>{t(L,'vh.fReg')}<input name="registration_number" required placeholder="名古屋 358 わ 00-00" /></label>
 			<label>{t(L,'vh.fColor')}<input name="color" placeholder="Sonic Quartz" /></label>

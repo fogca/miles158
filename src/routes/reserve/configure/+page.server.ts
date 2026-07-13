@@ -14,8 +14,9 @@ function parseOptions(form: FormData, catalogIds: string[]) {
 	const out: { optionId: string; qty: number }[] = [];
 	for (const id of catalogIds) {
 		const raw = form.get(`opt_${id}`);
-		const qty = raw ? Number(raw) : 0;
-		if (qty > 0) out.push({ optionId: id, qty });
+		// Integer quantities only (guards against fractional billing).
+		const qty = raw ? Math.floor(Number(raw)) : 0;
+		if (Number.isFinite(qty) && qty > 0) out.push({ optionId: id, qty });
 	}
 	return out;
 }
@@ -153,7 +154,7 @@ export const actions: Actions = {
 			phone,
 			address,
 			nationality: String(form.get('nationality') ?? '') || undefined,
-			preferredLocale: 'ja',
+			preferredLocale: locale,
 			licenseKind: d.licenseKind,
 			licenseNumber,
 			licenseType: String(form.get('licenseType') ?? '') || undefined,

@@ -128,19 +128,20 @@ export const serviceSlides: Slide[] = services.map((s, i) => ({
 	label: s.name
 }));
 
-// Cars — Lexus LC500 + LM500 (2 cars for now)
+// Cars — Land Cruiser FJ VX + Alphard Hybrid Z (2 cars).
+// NOTE: the two image files below are pending generation; paths are final.
 export const cars: Car[] = [
 	{
-		id: 'lc500',
-		name: 'Lexus LC500',
-		image: '/images/LC500.png',
-		subtitle: 'Grand Tourer · V8 Coupé'
+		id: 'fj-vx',
+		name: 'Land Cruiser FJ VX',
+		image: '/images/LandCruiserFJ-VX.png',
+		subtitle: 'Heritage Tourer · 2.7L 4WD'
 	},
 	{
-		id: 'lm500',
-		name: 'Lexus LM500',
-		image: '/images/LM500.png',
-		subtitle: 'Luxury Lounge · Chauffeured Minivan'
+		id: 'alphard-z',
+		name: 'Alphard Hybrid Z',
+		image: '/images/AlphardHybrid-Z.png',
+		subtitle: 'Premium Lounge · Hybrid 7-Seater'
 	}
 ];
 
@@ -153,15 +154,14 @@ export const place = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Rental — pricing, flow, conditions
-// All `price` strings are placeholders (`¥--,---`) until final figures are
-// confirmed. Update the rates here; the rental page renders straight from this.
+// Prices are tax-exclusive; the rental page renders straight from this.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type RentalRate = {
-	tier: 'day' | 'weekend' | 'monthly';
+	tier: 'day' | 'weekend' | 'extraHour' | 'cdw';
 	label: string; // English
 	labelJa: string; // 日本語
-	price: string; // tax-inclusive
+	price: string; // tax-exclusive
 	note?: string; // e.g. 走行距離 / 含まれるもの
 };
 
@@ -171,37 +171,28 @@ export type CarRental = {
 	rates?: RentalRate[]; // omitted when status === 'coming-soon'
 };
 
+const MILEAGE_NOTE = '走行距離 300km/日 まで / 超過は¥55/km';
+
 export const rentalPricing: CarRental[] = [
 	{
-		carId: 'lc500',
+		carId: 'fj-vx',
 		status: 'available',
 		rates: [
-			{
-				tier: 'day',
-				label: 'Day',
-				labelJa: '1日（24時間）',
-				price: '¥--,---',
-				note: '走行距離 -- km まで / 超過は別途'
-			},
-			{
-				tier: 'weekend',
-				label: 'Weekend',
-				labelJa: '週末（金〜日）',
-				price: '¥--,---',
-				note: '走行距離 -- km まで / 超過は別途'
-			},
-			{
-				tier: 'monthly',
-				label: 'Monthly',
-				labelJa: 'マンスリー（30日）',
-				price: '¥---,---',
-				note: '走行距離 ---- km まで / 超過は別途'
-			}
+			{ tier: 'day', label: 'Day', labelJa: '1日（24時間）', price: '¥32,000', note: MILEAGE_NOTE },
+			{ tier: 'weekend', label: 'Weekend', labelJa: '週末（金土日）', price: '¥41,600', note: MILEAGE_NOTE },
+			{ tier: 'extraHour', label: 'Extra Hour', labelJa: '延長（1時間）', price: '¥2,900' },
+			{ tier: 'cdw', label: 'CDW', labelJa: '車両補償（CDW）/ 日', price: '¥2,400' }
 		]
 	},
 	{
-		carId: 'lm500',
-		status: 'coming-soon'
+		carId: 'alphard-z',
+		status: 'available',
+		rates: [
+			{ tier: 'day', label: 'Day', labelJa: '1日（24時間）', price: '¥36,000', note: MILEAGE_NOTE },
+			{ tier: 'weekend', label: 'Weekend', labelJa: '週末（金土日）', price: '¥46,800', note: MILEAGE_NOTE },
+			{ tier: 'extraHour', label: 'Extra Hour', labelJa: '延長（1時間）', price: '¥3,300' },
+			{ tier: 'cdw', label: 'CDW', labelJa: '車両補償（CDW）/ 日', price: '¥2,700' }
+		]
 	}
 ];
 
@@ -223,7 +214,7 @@ export const rentalFlow: FlowStep[] = [
 		number: '02',
 		title: 'Confirmation',
 		titleJa: '内容確認・お支払い',
-		body: 'ご利用内容、料金、必要書類をご確認いただきます。お支払いは事前のお振込にて承ります。'
+		body: 'ご利用内容、料金、必要書類をご確認いただきます。お支払いは事前のオンライン決済にて承ります。'
 	},
 	{
 		number: '03',
@@ -247,7 +238,7 @@ export const rentalConditions = {
 	],
 	requirements: [
 		'満 25 歳以上であること',
-		'任意保険にご加入いただいていること',
+		'日本国内で有効な運転資格をお持ちであること',
 		'禁煙でのご利用にご協力ください'
 	],
 	notes: [

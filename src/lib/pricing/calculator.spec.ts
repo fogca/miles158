@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calcTotal, type ClassRate, type DurationDiscount } from './calculator';
+import { weekendFactor, WEEKEND_MULTIPLIER } from '$lib/server/pricing-data';
 import { jstDateToUtc } from '$lib/time';
 
 const GT: ClassRate = {
@@ -86,5 +87,26 @@ describe('calcTotal', () => {
 		expect(r.optionsAmount).toBe(5500); // 1100*2 + 3300
 		expect(r.subtotal).toBe(95100); // 83000 + 6600 + 5500
 		expect(r.total).toBe(104610);
+	});
+});
+
+// R-1 regression: the JST weekday must be resolved independently of the runtime
+// timezone (Workers run in UTC). Fri/Sat/Sun carry the weekend surcharge.
+describe('weekendFactor (JST weekday, TZ-independent)', () => {
+	it('applies 1.3 on Fri/Sat/Sun (JST)', () => {
+		expect(weekendFactor('2026-07-10')).toBe(WEEKEND_MULTIPLIER); // Fri
+		expect(weekendFactor('2026-07-11')).toBe(WEEKEND_MULTIPLIER); // Sat
+		expect(weekendFactor('2026-07-12')).toBe(WEEKEND_MULTIPLIER); // Sun
+	});
+
+	it('applies 1.0 on Thu/Mon (JST)', () => {
+		expect(weekendFactor('2026-07-09')).toBe(1); // Thu
+		expect(weekendFactor('2026-07-13')).toBe(1); // Mon
+	});
+
+	it('holds at week boundaries regardless of runtime TZ', () => {
+		// Year-end boundary: 2026-12-31 = Thu, 2027-01-01 = Fri.
+		expect(weekendFactor('2026-12-31')).toBe(1);
+		expect(weekendFactor('2027-01-01')).toBe(WEEKEND_MULTIPLIER);
 	});
 });

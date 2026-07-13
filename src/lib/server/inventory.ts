@@ -150,7 +150,35 @@ export async function createHold(db: DB, p: HoldInput): Promise<HoldResult> {
 	const expires = new Date(Date.now() + p.holdMinutes * 60_000).toISOString();
 	const optionsAmount = p.breakdown.optionsAmount + p.breakdown.coverageAmount;
 
+	// Purge expired holds on this vehicle first (same effect as expireHolds), so
+	// their leftover reservation_days rows cannot block the UNIQUE inserts below.
+	// Runs inside the same atomic batch: order matters — history and day deletion
+	// reference status='held' and must precede the UPDATE that cancels them.
+	const expiredHoldCond = `vehicle_id = ? AND status IN ('held', 'pending_payment') AND held_expires_at < ?`;
+	const purgeStmts = [
+		db
+			.prepare(
+				`INSERT INTO reservation_status_history (id, reservation_id, from_status, to_status, triggered_by, reason, created_at)
+				 SELECT lower(hex(randomblob(16))), id, status, 'cancelled', 'system', 'hold expired (purged on new hold)', ?
+				 FROM reservations WHERE ${expiredHoldCond}`
+			)
+			.bind(now, p.vehicleId, now),
+		db
+			.prepare(
+				`DELETE FROM reservation_days WHERE reservation_id IN
+				 (SELECT id FROM reservations WHERE ${expiredHoldCond})`
+			)
+			.bind(p.vehicleId, now),
+		db
+			.prepare(
+				`UPDATE reservations SET status = 'cancelled', cancelled_at = ?, updated_at = ?
+				 WHERE ${expiredHoldCond}`
+			)
+			.bind(now, now, p.vehicleId, now)
+	];
+
 	const stmts = [
+		...purgeStmts,
 		db
 			.prepare(
 				`INSERT INTO reservations
@@ -208,23 +236,26 @@ export async function releaseSlots(db: DB, reservationId: string): Promise<void>
 	await db.prepare('DELETE FROM reservation_days WHERE reservation_id = ?').bind(reservationId).run();
 }
 
-/** Cron: expire stale holds. Returns count expired. */
+/** Cron: expire stale holds (incl. abandoned pending_payment). Returns count expired. */
 export async function expireHolds(db: DB, now = nowIso()): Promise<number> {
 	const rows = (
 		await db
-			.prepare(`SELECT id FROM reservations WHERE status = 'held' AND held_expires_at < ?`)
+			.prepare(
+				`SELECT id, status FROM reservations
+				 WHERE status IN ('held', 'pending_payment') AND held_expires_at < ?`
+			)
 			.bind(now)
-			.all<{ id: string }>()
+			.all<{ id: string; status: string }>()
 	).results;
 	for (const r of rows) {
 		await db.batch([
 			db
 				.prepare(
-					`UPDATE reservations SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE id = ? AND status = 'held'`
+					`UPDATE reservations SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE id = ? AND status = ?`
 				)
-				.bind(now, now, r.id),
+				.bind(now, now, r.id, r.status),
 			db.prepare('DELETE FROM reservation_days WHERE reservation_id = ?').bind(r.id),
-			historyStmt(db, r.id, 'held', 'cancelled', 'cron', 'hold expired', now)
+			historyStmt(db, r.id, r.status, 'cancelled', 'cron', 'hold expired', now)
 		]);
 	}
 	return rows.length;
@@ -261,22 +292,27 @@ export async function removeBlackout(db: DB, vehicleId: string, date: string): P
 /** Cron: flag no-shows for confirmed reservations past pickup + grace minutes. */
 export async function flagNoShows(db: DB, graceMinutes = 60, now = nowIso()): Promise<number> {
 	const cutoff = new Date(Date.now() - graceMinutes * 60_000).toISOString();
+	// Fee follows the reservation's cancellation policy (no_show_fee_percent),
+	// not a hard-coded 100%. Missing policy falls back to 100%.
 	const rows = (
 		await db
 			.prepare(
-				`SELECT id, base_amount FROM reservations
-				 WHERE status = 'confirmed' AND pickup_scheduled_at IS NOT NULL AND pickup_scheduled_at < ?`
+				`SELECT r.id, r.base_amount, COALESCE(cp.no_show_fee_percent, 100) AS no_show_fee_percent
+				 FROM reservations r
+				 LEFT JOIN cancellation_policies cp ON cp.id = r.cancellation_policy_id
+				 WHERE r.status = 'confirmed' AND r.pickup_scheduled_at IS NOT NULL AND r.pickup_scheduled_at < ?`
 			)
 			.bind(cutoff)
-			.all<{ id: string; base_amount: number | null }>()
+			.all<{ id: string; base_amount: number | null; no_show_fee_percent: number }>()
 	).results;
 	for (const r of rows) {
+		const fee = Math.round(((r.base_amount ?? 0) * r.no_show_fee_percent) / 100);
 		await db.batch([
 			db
 				.prepare(
 					`UPDATE reservations SET status = 'no_show', no_show_at = ?, cancellation_fee = ?, updated_at = ? WHERE id = ? AND status = 'confirmed'`
 				)
-				.bind(now, r.base_amount ?? 0, now, r.id),
+				.bind(now, fee, now, r.id),
 			db.prepare('DELETE FROM reservation_days WHERE reservation_id = ?').bind(r.id),
 			historyStmt(db, r.id, 'confirmed', 'no_show', 'cron', 'no-show grace exceeded', now)
 		]);

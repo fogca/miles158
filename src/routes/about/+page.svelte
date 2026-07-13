@@ -23,7 +23,6 @@
 		name="twitter:description"
 		content="MILES 158 のブランド概要と 4 つのサービス。"
 	/>
-	<link rel="canonical" href="https://miles158.pages.dev/about" />
 </svelte:head>
 
 <main class="About">

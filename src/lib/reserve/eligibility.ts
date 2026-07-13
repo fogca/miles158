@@ -3,7 +3,9 @@
 // party to the 1949 Geneva Convention, and it is NOT in the 6-region translation
 // scheme (Switzerland/Germany/France/Belgium/Monaco/Taiwan). The only legal route
 // is 外免切替 (residency + practical test), which a tourist cannot use.
-// We therefore block china_mainland up front and route them to chauffeur (P2).
+// We therefore block china_mainland up front. NOTE: as a rent-a-car licensee we
+// must NOT offer or broker driver-provided services — the block message only
+// points to licensed hire/taxi operators as general information.
 
 export type LicenseKind =
 	| 'jp'
@@ -59,8 +61,8 @@ export const LICENSE_OPTIONS: LicenseOption[] = [
 		label: {
 			ja: '香港・マカオの国際運転免許証(IDP)',
 			en: 'Hong Kong / Macau IDP',
-			'zh-Hans': '香港・澳门国际驾照(IDP)',
-			'zh-Hant': '香港・澳門國際駕照(IDP)'
+			'zh-Hans': '香港/澳门国际驾照(IDP)',
+			'zh-Hant': '香港/澳門國際駕照(IDP)'
 		},
 		requiredDocs: ['国際運転免許証(IDP)', '本国の運転免許証', 'パスポート']
 	},
@@ -120,8 +122,8 @@ export function isEligible(kind: string): boolean {
 
 // Shown when china_mainland is selected.
 export const BLOCK_MESSAGE: Record<string, string> = {
-	ja: '中国本土で発行された運転免許証では、日本国内で運転することができません（国際運転免許証・翻訳文いずれも対象外）。ドライバー付きチャーターサービスのご用意がございますので、お問い合わせください。',
-	en: 'A driver’s license issued in mainland China cannot be used to drive in Japan (neither an IDP nor a translation qualifies). Please contact us about our chauffeur-driven charter service.',
-	'zh-Hans': '在中国大陆签发的驾照无法在日本驾车（国际驾照及译文均不适用）。我们提供配司机的包车服务，请与我们联系。',
-	'zh-Hant': '在中國大陸簽發的駕照無法在日本駕車（國際駕照及譯文均不適用）。我們提供配司機的包車服務，請與我們聯絡。'
+	ja: '中国本土で発行された運転免許証では、日本国内で運転することができません（国際運転免許証・翻訳文いずれも対象外）。運転者付きの移動をご希望の場合は、許可を受けたハイヤー・タクシー事業者のご利用をご検討ください。',
+	en: 'A driver’s license issued in mainland China cannot be used to drive in Japan (neither an IDP nor a translation qualifies). If you need transportation with a driver, please consider using a licensed hire-car or taxi operator.',
+	'zh-Hans': '在中国大陆签发的驾照无法在日本驾车（国际驾照及译文均不适用）。如需配备司机的出行方式，请考虑使用持有许可的出租车或专车运营商。',
+	'zh-Hant': '在中國大陸簽發的駕照無法在日本駕車（國際駕照及譯文均不適用）。如需配備司機的出行方式，請考慮使用持有許可的計程車或專車業者。'
 };

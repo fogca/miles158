@@ -13,7 +13,7 @@
 	]);
 </script>
 
-<ol class="Stepper" aria-label="予約ステップ">
+<ol class="Stepper" aria-label={t(L, 'rsv.stepperAria')}>
 	{#each steps as s (s.n)}
 		<li class="Stepper__item" class:is-active={s.n === current} class:is-done={s.n < current}>
 			<span class="Stepper__num">{s.n}</span>

@@ -3,6 +3,7 @@ import { getDb, genId } from '$lib/server/db';
 import { nowIso } from '$lib/time';
 import { loadSession } from '$lib/server/reserve-session';
 import { loadReservation, transitionReservation } from '$lib/server/reservation';
+import { InvalidTransitionError } from '$lib/booking/states';
 import { loadCancellationRules } from '$lib/server/pricing-data';
 import { getPaymentProvider, type Method } from '$lib/server/payment';
 import { sendEmail, buildBookingEmailData, type EmailEnv } from '$lib/server/email';
@@ -75,14 +76,27 @@ export const actions: Actions = {
 		}
 
 		const now = nowIso();
-		// HELD -> PENDING_PAYMENT (record consent)
+		// HELD -> PENDING_PAYMENT (record consent). The conditional UPDATE inside
+		// transitionReservation makes this the double-submit gate: if a parallel
+		// submit already moved the reservation on, fail safely instead of 500ing.
 		if (res.status === 'held') {
-			await transitionReservation(db, {
-				reservationId: res.id,
-				to: 'pending_payment',
-				actor: 'customer',
-				patch: { terms_agreed_at: now, consent_edoc_at: now }
-			});
+			try {
+				await transitionReservation(db, {
+					reservationId: res.id,
+					to: 'pending_payment',
+					actor: 'customer',
+					patch: { terms_agreed_at: now, consent_edoc_at: now }
+				});
+			} catch (e) {
+				if (e instanceof InvalidTransitionError) {
+					const latest = await loadReservation(db, res.id);
+					if (latest?.status === 'confirmed') {
+						throw redirect(303, lhref(locale, `/reserve/${res.code}`));
+					}
+					return fail(409, { message: t(locale, 'pay.errState') });
+				}
+				throw e;
+			}
 		}
 
 		// Authorize via the provider abstraction (Mock for now).
@@ -96,14 +110,18 @@ export const actions: Actions = {
 			metadata: { code: res.code }
 		});
 
-		// Persist payment record.
+		// Persist payment record. Map the provider status explicitly — anything we
+		// don't positively recognise must never be recorded (or confirmed) as paid.
 		const isWallet = method === 'wechat' || method === 'alipay';
+		const authorized = auth.status === 'succeeded' || auth.status === 'requires_capture' || auth.status === 'authorized';
 		const payStatus =
-			auth.status === 'failed'
-				? 'failed'
-				: isWallet
-					? 'captured'
-					: 'requires_capture';
+			auth.status === 'requires_action'
+				? 'requires_action'
+				: authorized
+					? isWallet
+						? 'captured'
+						: 'requires_capture'
+					: 'failed';
 		await db
 			.prepare(
 				`INSERT INTO payments
@@ -128,8 +146,19 @@ export const actions: Actions = {
 			)
 			.run();
 
-		if (auth.status === 'failed') {
-			// Roll back to HELD so the customer can retry while the slot is still theirs.
+		if (auth.status === 'requires_action') {
+			// Card authentication (3DS etc.) not completed — never confirm here.
+			// Roll back to HELD so the customer can retry while the slot is theirs.
+			await transitionReservation(db, {
+				reservationId: res.id,
+				to: 'held',
+				actor: 'customer',
+				reason: 'payment requires additional authentication'
+			});
+			return fail(400, { message: t(locale, 'pay.errFailed') });
+		}
+		if (!authorized) {
+			// 'failed' and any unrecognised status: roll back to HELD for retry.
 			await transitionReservation(db, {
 				reservationId: res.id,
 				to: 'held',
@@ -139,24 +168,37 @@ export const actions: Actions = {
 			return fail(402, { message: t(locale, 'pay.errFailed') });
 		}
 
-		// Success -> CONFIRMED.
-		await transitionReservation(db, {
-			reservationId: res.id,
-			to: 'confirmed',
-			actor: 'customer',
-			reason: `mock ${method} authorized`
-		});
+		// succeeded / requires_capture -> CONFIRMED.
+		try {
+			await transitionReservation(db, {
+				reservationId: res.id,
+				to: 'confirmed',
+				actor: 'customer',
+				reason: `mock ${method} authorized`
+			});
+		} catch (e) {
+			if (e instanceof InvalidTransitionError) {
+				// A parallel submit won the race; if it confirmed, treat as success.
+				const latest = await loadReservation(db, res.id);
+				if (latest?.status === 'confirmed') {
+					throw redirect(303, lhref(locale, `/reserve/${res.code}`));
+				}
+				return fail(409, { message: t(locale, 'pay.errState') });
+			}
+			throw e;
+		}
 
 		// Booking confirmation + staff notification (idempotent; never block the flow).
 		try {
 			const env = platform?.env as unknown as EmailEnv;
 			const baseUrl = env?.PUBLIC_BASE_URL || new URL(request.url).origin;
-			const { data, customerEmail } = await buildBookingEmailData(db, res, baseUrl);
+			const { data, customerEmail, locale: mailLocale } = await buildBookingEmailData(db, res, baseUrl);
 			if (customerEmail) {
 				await sendEmail(db, env, {
 					kind: 'booking_confirmation',
 					idempotencyKey: `booking_confirmation/${res.code}`,
 					to: customerEmail,
+					locale: mailLocale,
 					reservationId: res.id,
 					data
 				});

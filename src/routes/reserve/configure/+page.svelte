@@ -63,14 +63,14 @@
 							<input type="checkbox" name="cdw" checked={cdw} onchange={(e) => (cdw = e.currentTarget.checked)} />
 							<span>
 								<span class="Cfg__opt-name">{t(L, 'cfg.cdw')}</span>
-								<span class="Cfg__opt-price">{formatJpy(data.classRow.cdw_per_day)} {t(L, 'cfg.perDaySuffix')}</span>
+								<span class="Cfg__opt-price">{formatJpy(data.classRow.cdw_per_day, L)} {t(L, 'cfg.perDaySuffix')}</span>
 							</span>
 						</label>
 						<label class="Cfg__opt">
 							<input type="checkbox" name="noc" checked={noc} onchange={(e) => (noc = e.currentTarget.checked)} />
 							<span>
 								<span class="Cfg__opt-name">{t(L, 'cfg.noc')}</span>
-								<span class="Cfg__opt-price">{formatJpy(data.classRow.noc_waiver_per_day)} {t(L, 'cfg.perDaySuffix')}</span>
+								<span class="Cfg__opt-price">{formatJpy(data.classRow.noc_waiver_per_day, L)} {t(L, 'cfg.perDaySuffix')}</span>
 							</span>
 						</label>
 					</section>
@@ -83,7 +83,7 @@
 								<span>
 									<span class="Cfg__opt-name">{pickLoc(o, L)}</span>
 									<span class="Cfg__opt-price">
-										{formatJpy(o.price_amount)} {o.pricing_type === 'per_day' ? t(L, 'cfg.perDaySuffix') : t(L, 'cfg.perRentalSuffix')}
+										{formatJpy(o.price_amount, L)} {o.pricing_type === 'per_day' ? t(L, 'cfg.perDaySuffix') : t(L, 'cfg.perRentalSuffix')}
 									</span>
 								</span>
 								<select name={`opt_${o.id}`} bind:value={qty[o.id]} class="Cfg__qty">
@@ -121,15 +121,15 @@
 				<aside class="Cfg__summary">
 					<h2 class="Cfg__sum-title">{t(L, 'cfg.price')}</h2>
 					<dl class="Cfg__sum">
-						<div><dt>{t(L, 'rsv.cartRental', { d: days })}</dt><dd>{formatJpy(baseAmount)}</dd></div>
-						{#if coverageAmount > 0}<div><dt>{t(L, 'cfg.coverageLine')}</dt><dd>{formatJpy(coverageAmount)}</dd></div>{/if}
-						{#if optionsAmount > 0}<div><dt>{t(L, 'cfg.optionsLine')}</dt><dd>{formatJpy(optionsAmount)}</dd></div>{/if}
-						{#if discountAmount > 0}<div class="is-discount"><dt>{t(L, 'rsv.cartDiscount', { p: discountPercent })}</dt><dd>−{formatJpy(discountAmount)}</dd></div>{/if}
-						<div class="Cfg__sum-sub"><dt>{t(L, 'rsv.cartSubtotal')}</dt><dd>{formatJpy(subtotal)}</dd></div>
-						<div><dt>{t(L, 'rsv.cartTax')}</dt><dd>{formatJpy(taxAmount)}</dd></div>
-						<div class="Cfg__sum-total"><dt>{t(L, 'cfg.total')}</dt><dd>{formatJpy(total)}</dd></div>
+						<div><dt>{t(L, 'rsv.cartRental', { d: days })}</dt><dd>{formatJpy(baseAmount, L)}</dd></div>
+						{#if coverageAmount > 0}<div><dt>{t(L, 'cfg.coverageLine')}</dt><dd>{formatJpy(coverageAmount, L)}</dd></div>{/if}
+						{#if optionsAmount > 0}<div><dt>{t(L, 'cfg.optionsLine')}</dt><dd>{formatJpy(optionsAmount, L)}</dd></div>{/if}
+						{#if discountAmount > 0}<div class="is-discount"><dt>{t(L, 'rsv.cartDiscount', { p: discountPercent })}</dt><dd>−{formatJpy(discountAmount, L)}</dd></div>{/if}
+						<div class="Cfg__sum-sub"><dt>{t(L, 'rsv.cartSubtotal')}</dt><dd>{formatJpy(subtotal, L)}</dd></div>
+						<div><dt>{t(L, 'rsv.cartTax')}</dt><dd>{formatJpy(taxAmount, L)}</dd></div>
+						<div class="Cfg__sum-total"><dt>{t(L, 'cfg.total')}</dt><dd>{formatJpy(total, L)}</dd></div>
 					</dl>
-					<p class="Cfg__deposit">{t(L, 'cfg.depositNote', { dep: formatJpy(data.depositAmount) })}</p>
+					<p class="Cfg__deposit">{t(L, 'cfg.depositNote', { dep: formatJpy(data.depositAmount, L) })}</p>
 					<p class="Cfg__deposit">{t(L, 'cfg.mileageNote')}</p>
 
 					{#if form?.message}<p class="Cfg__error">{form.message}</p>{/if}

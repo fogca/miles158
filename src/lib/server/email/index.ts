@@ -29,6 +29,10 @@ export function getEmailProvider(env: EmailEnv): EmailProvider {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// A 'pending' claim older than this is treated as abandoned (crashed worker)
+// and may be retried under the same idempotency key.
+const PENDING_RETRY_AFTER_MS = 10 * 60_000;
+
 export interface SendParams {
 	kind: EmailKind;
 	idempotencyKey: string;
@@ -50,7 +54,7 @@ export async function sendEmail(db: DB, env: EmailEnv, p: SendParams): Promise<E
 	const provider = getEmailProvider(env);
 	const locale = p.locale ?? 'ja';
 	const rendered = renderEmail(p.kind, locale, p.data);
-	const id = genId();
+	let id = genId();
 	const now = nowIso();
 
 	// Phase 1 — claim the idempotency key.
@@ -75,8 +79,27 @@ export async function sendEmail(db: DB, env: EmailEnv, p: SendParams): Promise<E
 			)
 			.run();
 	} catch (e) {
-		if (isUniqueConstraintError(e)) return { status: 'skipped' };
-		throw e;
+		if (!isUniqueConstraintError(e)) throw e;
+		// Key already claimed. Allow a retry when the previous attempt failed or
+		// its 'pending' claim looks abandoned; otherwise keep the skip behaviour.
+		const existing = await db
+			.prepare('SELECT id, status, created_at FROM email_log WHERE idempotency_key = ?')
+			.bind(p.idempotencyKey)
+			.first<{ id: string; status: string; created_at: string }>();
+		const stalePending =
+			existing?.status === 'pending' &&
+			Date.now() - new Date(existing.created_at).getTime() > PENDING_RETRY_AFTER_MS;
+		if (!existing || (existing.status !== 'failed' && !stalePending)) {
+			return { status: 'skipped' };
+		}
+		// Reuse the existing row for the retry.
+		id = existing.id;
+		await db
+			.prepare(
+				`UPDATE email_log SET status = 'pending', to_addr = ?, subject = ?, locale = ?, provider = ?, body = ?, error = NULL WHERE id = ?`
+			)
+			.bind(toAddr, rendered.subject, locale, provider.name, rendered.text, id)
+			.run();
 	}
 
 	// Phase 2 — send (up to 3 attempts), then record outcome.
@@ -119,18 +142,25 @@ interface ReservationRowLike {
 	price_snapshot: string | null;
 }
 
-/** Build the TemplateData for a reservation + return the customer email. */
+/** Build the TemplateData for a reservation + the customer email and locale. */
 export async function buildBookingEmailData(
 	db: DB,
 	res: ReservationRowLike,
 	baseUrl: string
-): Promise<{ data: TemplateData; customerEmail: string | null }> {
+): Promise<{ data: TemplateData; customerEmail: string | null; locale: Locale }> {
 	const [customer, vehicle, rules] = await Promise.all([
 		res.customer_id
 			? db
-					.prepare('SELECT email, name_family, name_given FROM customers WHERE id = ?')
+					.prepare(
+						'SELECT email, name_family, name_given, preferred_locale FROM customers WHERE id = ?'
+					)
 					.bind(res.customer_id)
-					.first<{ email: string | null; name_family: string; name_given: string }>()
+					.first<{
+						email: string | null;
+						name_family: string;
+						name_given: string;
+						preferred_locale: string | null;
+					}>()
 			: Promise.resolve(null),
 		res.vehicle_id
 			? db
@@ -143,13 +173,16 @@ export async function buildBookingEmailData(
 			: Promise.resolve([])
 	]);
 
+	const rawLocale = customer?.preferred_locale;
+	const locale: Locale = rawLocale === 'en' || rawLocale === 'zh' ? rawLocale : 'ja';
+
 	const data: TemplateData = {
 		reservationCode: res.code,
 		customerName: customer ? `${customer.name_family} ${customer.name_given}` : 'お客様',
 		vehicleName: vehicle?.display_name ?? '車両',
 		vehicleSubtitle: vehicle?.subtitle ?? null,
-		pickupAtJst: res.pickup_scheduled_at ? formatJst(res.pickup_scheduled_at, 'ja') : '',
-		returnAtJst: res.return_scheduled_at ? formatJst(res.return_scheduled_at, 'ja') : '',
+		pickupAtJst: res.pickup_scheduled_at ? formatJst(res.pickup_scheduled_at, locale) : '',
+		returnAtJst: res.return_scheduled_at ? formatJst(res.return_scheduled_at, locale) : '',
 		pickupOffice: res.pickup_office ?? 'nagoya',
 		returnOffice: res.return_office ?? 'nagoya',
 		total: res.total_amount ?? 0,
@@ -158,7 +191,7 @@ export async function buildBookingEmailData(
 		cancellationRules: rules,
 		baseUrl
 	};
-	return { data, customerEmail: customer?.email ?? null };
+	return { data, customerEmail: customer?.email ?? null, locale };
 }
 
 export * from './types';

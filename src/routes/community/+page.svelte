@@ -23,7 +23,6 @@
 		name="twitter:description"
 		content="車好きが集うプライベートな会員制クラブコミュニティ。"
 	/>
-	<link rel="canonical" href="https://miles158.pages.dev/community" />
 </svelte:head>
 
 <main class="page">

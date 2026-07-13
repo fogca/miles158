@@ -25,19 +25,18 @@
 	<title>Car Rental — MILES 158</title>
 	<meta
 		name="description"
-		content="MILES 158 のカーレンタル。Lexus LC500 / LM500 の料金（日額・週末・マンスリー）、ご利用フロー、必要書類・条件をご案内。"
+		content="MILES 158 のカーレンタル。Land Cruiser FJ VX / Alphard Hybrid Z の料金（日額・週末・延長・CDW）、ご利用フロー、必要書類・条件をご案内。"
 	/>
 	<meta property="og:title" content="Car Rental — MILES 158" />
 	<meta
 		property="og:description"
-		content="Lexus LC500 / LM500 の高級カーレンタル。料金・ご利用方法・必要書類のご案内。"
+		content="Land Cruiser FJ VX / Alphard Hybrid Z のカーレンタル。料金・ご利用方法・必要書類のご案内。"
 	/>
 	<meta name="twitter:title" content="Car Rental — MILES 158" />
 	<meta
 		name="twitter:description"
-		content="Lexus LC500 / LM500 の高級カーレンタル。料金・ご利用方法のご案内。"
+		content="Land Cruiser FJ VX / Alphard Hybrid Z のカーレンタル。料金・ご利用方法のご案内。"
 	/>
-	<link rel="canonical" href="https://miles158.pages.dev/rental" />
 </svelte:head>
 
 <main class="Rental">

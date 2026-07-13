@@ -10,7 +10,33 @@ export const dict = {
 	'footer.tagline': {
 		ja: '名古屋・西区 国道158号沿い\n車と過ごす時間のためのラウンジ。',
 		en: 'Route 158, Nishi-ku, Nagoya.\nA lounge for time spent with cars.',
-		zh: '名古屋市西区・国道158号沿线\n为与车共度的时光而设的车主俱乐部。'
+		zh: '名古屋市西区国道158号沿线\n为与车共度的时光而设的车主俱乐部。'
+	},
+	'footer.legalPrivacy': { ja: 'プライバシーポリシー', en: 'Privacy Policy', zh: '隐私政策' },
+	'footer.legalTokushohou': { ja: '特定商取引法に基づく表記', en: 'Legal Notice', zh: '特定商业交易法标示' },
+	'footer.legalTerms': { ja: '貸渡約款', en: 'Terms', zh: '租赁条款' },
+	'footer.legalInsurance': { ja: '保険・補償', en: 'Insurance', zh: '保险与保障' },
+	'meta.title': {
+		ja: 'MILES 158 — 名古屋・西区のカーラウンジ＆カーレンタル',
+		en: 'MILES 158 — Car Lounge & Rental · Nagoya',
+		zh: 'MILES 158 — 名古屋汽车俱乐部与租车'
+	},
+	'meta.desc': {
+		ja: 'MILES 158 — 名古屋・西区に生まれた車好きのためのカーラウンジ。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンス。',
+		en: 'MILES 158 — a car lounge in Nishi-ku, Nagoya, for people who love cars. Car rental, club community, cafe lounge and maintenance.',
+		zh: 'MILES 158 — 诞生于名古屋西区、为爱车之人而设的汽车俱乐部。汽车租赁、车主社区、咖啡俱乐部与车辆养护。'
+	},
+	'err.404Title': { ja: 'ページが見つかりません', en: 'Page not found', zh: '未找到页面' },
+	'err.404Body': {
+		ja: 'お探しのページは移動または削除された可能性があります。',
+		en: 'The page you are looking for may have been moved or removed.',
+		zh: '您要访问的页面可能已被移动或删除。'
+	},
+	'err.500Title': { ja: 'エラーが発生しました', en: 'Something went wrong', zh: '发生错误' },
+	'err.500Body': {
+		ja: '一時的な問題が発生しています。時間をおいて再度お試しください。',
+		en: 'A temporary problem occurred. Please try again in a moment.',
+		zh: '出现暂时性问题，请稍后重试。'
 	},
 	'footer.visitNote': {
 		ja: 'ご来店・試乗・ご相談はお気軽にお問い合わせください。',
@@ -38,14 +64,14 @@ export const dict = {
 	},
 	'common.viewMore': { ja: '詳しく見る', en: 'Learn more', zh: '了解更多' },
 	'home.carsLead': {
-		ja: '厳選された Lexus を中心に、走る喜びを最大化する2台をご用意しています。',
-		en: 'Two carefully chosen Lexus, selected to maximize the joy of driving.',
-		zh: '以精选 Lexus 为核心，为您准备了两台将驾驶乐趣最大化的车。'
+		ja: '厳選された2台のトヨタ — 走る喜びを最大化するラインアップです。',
+		en: 'Two carefully chosen Toyotas, selected to maximize the joy of driving.',
+		zh: '两台精选丰田座驾，将驾驶的乐趣最大化。'
 	},
 	'home.place': {
 		ja: '愛知県名古屋市西区・国道158号沿い',
 		en: 'Route 158, Nishi-ku, Nagoya, Aichi',
-		zh: '爱知县名古屋市西区・国道158号沿线'
+		zh: '爱知县名古屋市西区国道158号沿线'
 	},
 
 	// ---- about ----
@@ -57,7 +83,7 @@ export const dict = {
 	'about.introBody': {
 		ja: '「車と走る喜びをもっと身近に」 ― 私たちが見つめているのは、距離や所有の量ではなく、車と共に流れる時間の質です。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンスという4つのサービスを通じて、車と過ごすあらゆる時間を豊かにしていきたいと考えています。',
 		en: '“Bringing the joy of driving closer” — what we care about is not distance or ownership, but the quality of time that flows with a car. Through four services — car rental, club community, cafe lounge and maintenance — we want to enrich every moment spent with cars.',
-		zh: '「让驾驶的乐趣触手可及」——我们在意的不是里程与拥有，而是与车共度时光的质量。通过汽车租赁、车主社区、咖啡俱乐部与养护这四项服务，让与车相处的每一刻都更加丰盈。'
+		zh: '“让驾驶的乐趣触手可及”——我们在意的不是里程与拥有，而是与车共度时光的质量。通过汽车租赁、车主社区、咖啡俱乐部与养护这四项服务，让与车相处的每一刻都更加丰盈。'
 	},
 	'about.companyTitle': { ja: '会社概要', en: 'Company', zh: '公司概要' },
 	'about.coName': { ja: '商号', en: 'Name', zh: '名称' },
@@ -109,9 +135,10 @@ export const dict = {
 		zh: '首先确认您能否在日本驾车。请选择您持有的驾照类型。'
 	},
 	'rsv.docsTitle': { ja: 'ご来店時にご用意いただくもの', en: 'Please bring on the day', zh: '到店时请携带' },
-	'rsv.charterCta': { ja: 'チャーターを相談する', en: 'Ask about chauffeur service', zh: '咨询包车服务' },
 	'rsv.s2': { ja: '車両を選ぶ', en: 'Choose Your Car', zh: '选择车辆' },
 	'rsv.perDay': { ja: '1日', en: 'per day', zh: '每日' },
+	'rsv.fromPrice': { ja: '{price}〜', en: 'From {price}', zh: '{price} 起' },
+	'rsv.stepperAria': { ja: '予約ステップ', en: 'Reservation steps', zh: '预约步骤' },
 	'rsv.taxExcl': { ja: '(税抜)', en: '(excl. tax)', zh: '（不含税）' },
 	'rsv.s3': { ja: '期間を選ぶ', en: 'Choose Your Dates', zh: '选择日期' },
 	'rsv.pickupTime': { ja: '貸出時刻', en: 'Pickup time', zh: '取车时间' },
@@ -130,7 +157,7 @@ export const dict = {
 	'rsv.calLeadTail': { ja: 'ください。', en: '.', zh: '。' },
 	'rsv.cartTitle': { ja: 'ご予約内容', en: 'Your Booking', zh: '预约内容' },
 	'rsv.cartRental': { ja: 'レンタル料金（{d}日）', en: 'Rental ({d} days)', zh: '租金（{d} 天）' },
-	'rsv.cartDiscount': { ja: '長期割引 {p}%', en: 'Long-stay −{p}%', zh: '长租折扣 {p}%' },
+	'rsv.cartDiscount': { ja: '長期割引 {p}%', en: 'Long-stay {p}% off', zh: '长租折扣 {p}%' },
 	'rsv.cartTax': { ja: '消費税', en: 'Tax', zh: '消费税' },
 	'rsv.cartSubtotal': { ja: '小計', en: 'Subtotal', zh: '小计' },
 	'rsv.cartNote': {
@@ -162,8 +189,8 @@ export const dict = {
 	},
 
 	// ---- stepper ----
-	'step.1': { ja: '車両・期間', en: 'Car & Dates', zh: '车辆・日期' },
-	'step.2': { ja: 'オプション・お客様情報', en: 'Options & Details', zh: '选装・客户信息' },
+	'step.1': { ja: '車両・期間', en: 'Car & Dates', zh: '车辆/日期' },
+	'step.2': { ja: 'オプション・お客様情報', en: 'Options & Details', zh: '选装/客户信息' },
 	'step.3': { ja: 'お支払い', en: 'Payment', zh: '支付' },
 	'step.4': { ja: '完了', en: 'Done', zh: '完成' },
 
@@ -173,9 +200,9 @@ export const dict = {
 	'cal.soon': { ja: '直前は要電話', en: 'Call for near dates', zh: '近期请来电' },
 	'cal.selected': { ja: '選択中', en: 'Selected', zh: '已选择' },
 	'cal.soonTip': {
-		ja: 'ご利用3日前から予約可能（お急ぎはお電話で）',
-		en: 'Online booking opens up to 3 days before pickup — call us for sooner.',
-		zh: '在线预约需提前 3 天，加急请来电。'
+		ja: 'オンライン予約はご利用開始3日前まで（3日以内はお電話で）',
+		en: 'Online booking closes 3 days before pickup; within 3 days, please call us.',
+		zh: '在线预约最晚受理至用车前 3 天，3 天以内请来电。'
 	},
 	'cal.rangeBlocked': {
 		ja: '選択期間に予約済みの日が含まれます。別の期間をお選びください。',
@@ -195,7 +222,7 @@ export const dict = {
 	'cfg.perDaySuffix': { ja: '/ 日', en: '/ day', zh: '/ 天' },
 	'cfg.perRentalSuffix': { ja: '/ 回', en: '/ rental', zh: '/ 次' },
 	'cfg.options': { ja: 'オプション', en: 'Options', zh: '选装' },
-	'cfg.customer': { ja: 'お客様情報（借受人・運転者）', en: 'Your Details (renter & driver)', zh: '客户信息（承租人・驾驶人）' },
+	'cfg.customer': { ja: 'お客様情報（借受人・運転者）', en: 'Your Details (renter & driver)', zh: '客户信息（承租人/驾驶人）' },
 	'cfg.fFamily': { ja: '姓 *', en: 'Family name *', zh: '姓 *' },
 	'cfg.fGiven': { ja: '名 *', en: 'Given name *', zh: '名 *' },
 	'cfg.fEmail': { ja: 'メール *', en: 'Email *', zh: '邮箱 *' },
@@ -248,7 +275,8 @@ export const dict = {
 	'pay.iv.sameday': { ja: '当日', en: 'Same day', zh: '当天' },
 	'pay.iv.1to2': { ja: '1〜2日前', en: '1–2 days before', zh: '1〜2 天前' },
 	'pay.iv.3to6': { ja: '3〜6日前', en: '3–6 days before', zh: '3〜6 天前' },
-	'pay.iv.7plus': { ja: '7日前まで', en: 'Up to 7 days before', zh: '7 天前' },
+	'pay.iv.7plus': { ja: '7日以上前', en: '7+ days before pickup', zh: '提前 7 天以上' },
+	'pay.iv.noshow': { ja: '無連絡不来店（ノーショー）', en: 'No-show', zh: '未到店（无联络）' },
 	'pay.method': { ja: 'お支払い方法', en: 'Payment Method', zh: '支付方式' },
 	'pay.card': { ja: 'クレジットカード', en: 'Credit card', zh: '信用卡' },
 	'pay.walletNote': {
@@ -258,6 +286,16 @@ export const dict = {
 	},
 	'pay.total': { ja: 'お支払い合計', en: 'Total', zh: '支付合计' },
 	'pay.deposit': { ja: '保証金（与信）', en: 'Deposit (hold)', zh: '押金（预授权）' },
+	'pay.depositNote': {
+		ja: '保証金 {dep} はクレジットカードの与信枠として確保するもので、請求は行いません。ご返却確認後、通常5〜10営業日を目安に解放されます。',
+		en: 'The {dep} deposit is an authorization hold on your card, not a charge. It is released within approximately 5–10 business days after the return is confirmed.',
+		zh: '押金 {dep} 仅为信用卡预授权冻结，不会实际扣款。确认还车后，通常约 5〜10 个工作日内解除。'
+	},
+	'pay.langNote': {
+		ja: '※ 各規約の正文は日本語版です。',
+		en: 'The Japanese text is the official version of these terms.',
+		zh: '相关条款以日文版本为准。'
+	},
 	'pay.agreePre': { ja: '', en: 'I agree to the ', zh: '我同意' },
 	'pay.terms': { ja: '貸渡約款', en: 'Rental Terms', zh: '《租赁条款》' },
 	'pay.and': { ja: '・', en: ' and ', zh: '与' },
@@ -309,9 +347,15 @@ export const dict = {
 	'dash.legHint': {
 		ja: '空き日をクリックで「予約不可」に切替（保存するまで反映されません）',
 		en: 'Click an open day to toggle “blocked” — changes apply when you save.',
-		zh: '点击空闲日期切换为「不可预约」——保存后生效。'
+		zh: '点击空闲日期切换为“不可预约”——保存后生效。'
 	},
-	'dash.savedMsg': { ja: '保存しました（追加 {a} 件 / 解除 {r} 件）。', en: 'Saved ({a} added / {r} removed).', zh: '已保存（新增 {a} 项／解除 {r} 项）。' },
+	'dash.pending': { ja: '未保存', en: 'Unsaved', zh: '未保存' },
+	'dash.errSaveMissing': {
+		ja: '保存に必要な情報が不足しています。',
+		en: 'Missing information required to save.',
+		zh: '缺少保存所需的信息。'
+	},
+	'dash.savedMsg': { ja: '保存しました（追加 {a} 件 / 解除 {r} 件）。', en: 'Saved ({a} added / {r} removed).', zh: '已保存（新增 {a} 项/解除 {r} 项）。' },
 	'dash.conflictMsg': {
 		ja: '次の日付は予約が入っているため設定できませんでした：{days}',
 		en: 'These days are booked and could not be blocked: {days}',
@@ -349,10 +393,10 @@ export const dict = {
 
 	// ---- dashboard: detail ----
 	'dt.back': { ja: '← 予約一覧', en: '← Bookings', zh: '← 预约列表' },
-	'dt.vehiclePeriod': { ja: '車両・期間', en: 'Vehicle & Period', zh: '车辆・期间' },
+	'dt.vehiclePeriod': { ja: '車両・期間', en: 'Vehicle & Period', zh: '车辆/期间' },
 	'dt.customer': { ja: 'お客様（借受人）', en: 'Customer (renter)', zh: '客户（承租人）' },
 	'dt.price': { ja: '料金', en: 'Price', zh: '费用' },
-	'dt.payments': { ja: '決済・返金', en: 'Payments & Refunds', zh: '支付・退款' },
+	'dt.payments': { ja: '決済・返金', en: 'Payments & Refunds', zh: '支付/退款' },
 	'dt.history': { ja: '履歴', en: 'History', zh: '历史记录' },
 	'dt.actions': { ja: '操作', en: 'Actions', zh: '操作' },
 	'dt.kVehicle': { ja: '車両', en: 'Vehicle', zh: '车辆' },
@@ -364,7 +408,7 @@ export const dict = {
 	'dt.kAddress': { ja: '住所', en: 'Address', zh: '地址' },
 	'dt.kLicense': { ja: '免許', en: 'License', zh: '驾照' },
 	'dt.kBase': { ja: '基本', en: 'Base', zh: '基础租金' },
-	'dt.kOptions': { ja: 'オプション・補償', en: 'Options & coverage', zh: '选装・保障' },
+	'dt.kOptions': { ja: 'オプション・補償', en: 'Options & coverage', zh: '选装/保障' },
 	'dt.kTax': { ja: '消費税', en: 'Tax', zh: '消费税' },
 	'dt.kTotal': { ja: '合計', en: 'Total', zh: '合计' },
 	'dt.kDeposit': { ja: '保証金', en: 'Deposit', zh: '押金' },
@@ -372,7 +416,7 @@ export const dict = {
 	'dt.kMileageOverage': {
 		ja: '走行距離超過（1日300km・超過¥55/km）',
 		en: 'Mileage overage (300km/day incl., ¥55/km beyond)',
-		zh: '超里程费（每日含 300km・超出 ¥55/km）'
+		zh: '超里程费（每日含 300km，超出 ¥55/km）'
 	},
 	'dt.none': { ja: 'なし', en: 'None', zh: '无' },
 	'dt.unregistered': { ja: '未登録', en: 'Not registered', zh: '未登记' },
@@ -403,7 +447,18 @@ export const dict = {
 	'nb.lead': {
 		ja: '電話・WeChat 等で受けた予約をその場で登録します。確定済みとして在庫を確保し、お支払いはオフラインで処理します。',
 		en: 'Register bookings taken by phone / WeChat. Inventory is secured as confirmed; payment is handled offline.',
-		zh: '现场录入电话・微信渠道的预约。录入即确认并锁定库存，付款线下处理。'
+		zh: '现场录入电话/微信渠道的预约。录入即确认并锁定库存，付款线下处理。'
+	},
+	'nb.errRequired': {
+		ja: '車両・期間・お名前は必須です。',
+		en: 'Vehicle, dates and name are required.',
+		zh: '车辆、日期与姓名为必填项。'
+	},
+	'nb.errNoVehicle': { ja: '車両が見つかりません。', en: 'Vehicle not found.', zh: '未找到该车辆。' },
+	'nb.errTaken': {
+		ja: '選択期間はすでに予約済みです。',
+		en: 'Those dates are already booked.',
+		zh: '所选期间已被预约。'
 	},
 	'nb.vehicle': { ja: '車両', en: 'Vehicle', zh: '车辆' },
 	'nb.select': { ja: '選択', en: 'Select', zh: '请选择' },
@@ -434,6 +489,17 @@ export const dict = {
 	'vh.fColor': { ja: 'カラー', en: 'Color', zh: '颜色' },
 	'vh.add': { ja: '追加', en: 'Add', zh: '添加' },
 	'vh.added': { ja: '追加しました。', en: 'Added.', zh: '已添加。' },
+	'vh.errRequired': {
+		ja: '車名・クラス・登録番号は必須です。',
+		en: 'Name, class and plate number are required.',
+		zh: '车名、级别与牌照号为必填项。'
+	},
+	'vh.errDupReg': {
+		ja: 'この登録番号は既に存在します。',
+		en: 'This plate number already exists.',
+		zh: '该牌照号已存在。'
+	},
+	'vh.errBadStatus': { ja: '不正な状態です。', en: 'Invalid status.', zh: '状态无效。' },
 
 	// ---- login ----
 	'lg.setupTitle': { ja: '管理者の初期設定', en: 'Set up the first admin', zh: '初始化管理员' },
@@ -445,6 +511,21 @@ export const dict = {
 	'lg.createBtn': { ja: '作成してログイン', en: 'Create & log in', zh: '创建并登录' },
 	'lg.loginTitle': { ja: 'ログイン', en: 'Log in', zh: '登录' },
 	'lg.loginBtn': { ja: 'ログイン', en: 'Log in', zh: '登录' },
+	'lg.errBadCreds': {
+		ja: 'メールアドレスまたはパスワードが違います。',
+		en: 'Incorrect email or password.',
+		zh: '邮箱或密码不正确。'
+	},
+	'lg.errExists': {
+		ja: 'すでに管理者が存在します。',
+		en: 'An administrator already exists.',
+		zh: '管理员已存在。'
+	},
+	'lg.errWeak': {
+		ja: 'メールアドレスと8文字以上のパスワードを入力してください。',
+		en: 'Enter an email address and a password of at least 8 characters.',
+		zh: '请输入邮箱和至少 8 位的密码。'
+	},
 
 	// ---- status labels ----
 	'st.draft': { ja: '下書き', en: 'Draft', zh: '草稿' },

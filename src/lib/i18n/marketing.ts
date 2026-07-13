@@ -76,11 +76,11 @@ const SERVICE_DESC: Record<Exclude<Locale, 'ja'>, Record<string, string>> = {
 	},
 	zh: {
 		rental:
-			'秉持「让驾驶的乐趣触手可及」的理念，我们提供可安心享受美好时光的车辆租赁。租期灵活，亦有包月方案，欢迎垂询。我们所理解的租车，从来不只是把车借给您——而是与这台车一同诞生的时间与体验。纪念日、旅行、或只是一个想开车的日子，我们希望让这些特别的瞬间更加亲近。',
+			'秉持“让驾驶的乐趣触手可及”的理念，我们提供可安心享受美好时光的车辆租赁。租期灵活，亦有包月方案，欢迎垂询。我们所理解的租车，从来不只是把车借给您——而是与这台车一同诞生的时间与体验。纪念日、旅行、或只是一个想开车的日子，我们希望让这些特别的瞬间更加亲近。',
 		community:
-			'我们相信「对车的热爱能让人与人长久相连」，因此运营着一个爱车人士的私密会员社区。在这里，志同道合的伙伴交换时间、知识与故事。会员制度与定期活动欢迎咨询——我们希望它不止是一项服务，而是同好们可以长久归属的精神据点。',
+			'我们相信“对车的热爱能让人与人长久相连”，因此运营着一个爱车人士的私密会员社区。在这里，志同道合的伙伴交换时间、知识与故事。会员制度与定期活动欢迎咨询——我们希望它不止是一项服务，而是同好们可以长久归属的精神据点。',
 		cafe:
-			'与车相处的时光，不只在路上。我们经营着一间浸润着汽车文化的咖啡俱乐部，会员与普通访客都可光临。它不只是提供餐饮的场所，更是编织「旅程的另一段行程」、让车与人相遇的地方——让不开车的时间也同样丰盈。',
+			'与车相处的时光，不只在路上。我们经营着一间浸润着汽车文化的咖啡俱乐部，会员与普通访客都可光临。它不只是提供餐饮的场所，更是编织“旅程的另一段行程”、让车与人相遇的地方——让不开车的时间也同样丰盈。',
 		cleaning:
 			'保持车的美丽状态，本身就是对车的敬意。从基础洗车到内外装的深度养护，我们悉心守护每一台车的尊严与价值——只为让您握上方向盘的那一刻，纯粹地感到喜悦。'
 	}
@@ -109,8 +109,8 @@ const FLOW: Record<Exclude<Locale, 'ja'>, { titleJa: string; body: string }[]> =
 		{ titleJa: 'Return', body: 'Return the car to the lounge with a full tank. The rental ends after a joint inspection.' }
 	],
 	zh: [
-		{ titleJa: '咨询・预约', body: '告知您想租的车辆与日期，我们确认空档后尽快回复。' },
-		{ titleJa: '确认・支付', body: '确认租赁内容、费用与所需证件，费用需提前支付。' },
+		{ titleJa: '咨询/预约', body: '告知您想租的车辆与日期，我们确认空档后尽快回复。' },
+		{ titleJa: '确认/支付', body: '确认租赁内容、费用与所需证件，费用需提前支付。' },
 		{ titleJa: '到店取车', body: '在 MILES 158 门店交车。请出示驾照，并与我们共同确认车况。' },
 		{ titleJa: '还车', body: '请加满油后归还至门店，共同验车后租赁结束。' }
 	]
@@ -141,11 +141,11 @@ const COND: Record<Exclude<Locale, 'ja'>, typeof condJa> = {
 		documents: ['驾照（取得满 3 年以上）', '可确认现住址的身份证件', '信用卡（用于押金预授权）'],
 		requirements: ['年满 25 周岁', '持有可在日本驾驶的有效资格', '全车禁烟，敬请配合'],
 		notes: [
-			'部分图片仅供参考，可能与实际车辆・配置不同。',
+			'部分图片仅供参考，可能与实际车辆、配置不同。',
 			'所示价格均不含税；消费税及押金（信用卡预授权）另计。',
 			'每日含 300km 里程，超出部分按每公里 ¥55 收费；未满油归还时也将另行收费。',
 			'可提供送取车服务，远距离将产生配送费用。',
-			'如发生事故・损伤，将依保险与 NOC（营业损失补偿）规定承担相应费用，详见「保险・保障」页面。'
+			'如发生事故、损伤，将依保险与 NOC（营业损失补偿）规定承担相应费用，详见“保险与保障”页面。'
 		]
 	}
 };
@@ -157,14 +157,16 @@ export function getRentalConditions(locale: Locale) {
 
 const RATE_LABEL: Record<Exclude<Locale, 'ja'>, Record<string, { labelJa: string; note?: string }>> = {
 	en: {
-		day: { labelJa: '1 day (24h)', note: 'Mileage allowance applies; excess billed separately' },
-		weekend: { labelJa: 'Weekend (Fri–Sun)', note: 'Mileage allowance applies; excess billed separately' },
-		monthly: { labelJa: 'Monthly (30 days)', note: 'Mileage allowance applies; excess billed separately' }
+		day: { labelJa: '1 day (24h)', note: '300km/day included; excess ¥55/km' },
+		weekend: { labelJa: 'Weekend (Fri–Sun)', note: '300km/day included; excess ¥55/km' },
+		extraHour: { labelJa: 'Extension (per hour)' },
+		cdw: { labelJa: 'CDW coverage / day' }
 	},
 	zh: {
-		day: { labelJa: '1 天（24小时）', note: '含规定里程，超出另计' },
-		weekend: { labelJa: '周末（周五〜周日）', note: '含规定里程，超出另计' },
-		monthly: { labelJa: '包月（30天）', note: '含规定里程，超出另计' }
+		day: { labelJa: '1 天（24小时）', note: '每日含 300km，超出 ¥55/km' },
+		weekend: { labelJa: '周末（周五至周日）', note: '每日含 300km，超出 ¥55/km' },
+		extraHour: { labelJa: '延长（每小时）' },
+		cdw: { labelJa: '车辆保障（CDW）/ 天' }
 	}
 };
 

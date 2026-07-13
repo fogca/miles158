@@ -60,8 +60,10 @@ export function classToRate(c: VehicleClassRow): ClassRate {
 export const WEEKEND_MULTIPLIER = 1.3;
 const WEEKEND_DOW = new Set([5, 6, 0]); // getDay(): Sun=0 … Fri=5, Sat=6
 
-function weekendFactor(date: string): number {
-	const dow = new Date(`${date}T00:00:00+09:00`).getDay();
+export function weekendFactor(date: string): number {
+	// TZ-independent: JST noon is 03:00 UTC on the same calendar date, so
+	// getUTCDay() yields the JST weekday even on UTC runtimes (Workers).
+	const dow = new Date(`${date}T12:00:00+09:00`).getUTCDay();
 	return WEEKEND_DOW.has(dow) ? WEEKEND_MULTIPLIER : 1;
 }
 
@@ -188,7 +190,9 @@ export async function computeQuote(
 	const catMap = new Map(catalog.map((o) => [o.id, o]));
 	const selected: Array<PriceOptionInput & { optionId: string }> = [];
 	for (const o of params.options) {
-		if (o.qty <= 0) continue;
+		// Integer quantities only — reject NaN and fractional values from forms.
+		const qty = Math.floor(Number(o.qty));
+		if (!Number.isFinite(qty) || qty <= 0) continue;
 		const c = catMap.get(o.optionId);
 		if (!c) continue;
 		selected.push({
@@ -197,7 +201,7 @@ export async function computeQuote(
 			label: c.name_ja,
 			unitPrice: c.price_amount,
 			type: c.pricing_type,
-			qty: Math.min(o.qty, c.max_quantity)
+			qty: Math.min(qty, c.max_quantity)
 		});
 	}
 

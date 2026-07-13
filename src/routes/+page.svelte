@@ -34,7 +34,12 @@
 </script>
 
 <svelte:head>
-	<title>MILES 158 — Car Service Brand · Nagoya</title>
+	<title>{t(L, 'meta.title')}</title>
+	<meta name="description" content={t(L, 'meta.desc')} />
+	<meta property="og:title" content={t(L, 'meta.title')} />
+	<meta property="og:description" content={t(L, 'meta.desc')} />
+	<meta name="twitter:title" content="MILES 158" />
+	<meta name="twitter:description" content={t(L, 'meta.desc')} />
 </svelte:head>
 
 <main class="home">

@@ -99,9 +99,9 @@
 
 <div class="CalCard">
 	<div class="CalBar">
-		<a class="nav" href={navUrl(data.offset - 1)} onclick={navGuard} aria-label="前の月">‹</a>
+		<a class="nav" href={navUrl(data.offset - 1)} onclick={navGuard} aria-label={t(L, 'cal.prev')}>‹</a>
 		<span class="CalBar__title">{data.monthLabel}</span>
-		<a class="nav" href={navUrl(data.offset + 1)} onclick={navGuard} aria-label="次の月">›</a>
+		<a class="nav" href={navUrl(data.offset + 1)} onclick={navGuard} aria-label={t(L, 'cal.next')}>›</a>
 	</div>
 
 	<div class="Legend">
@@ -151,7 +151,7 @@
 						>
 							<span class="cell__d">{day}</span>
 							{#if isBlk}<span class="cell__tag">{t(L, 'dash.cellBlocked')}</span>{:else}<span class="cell__add">{t(L, 'dash.cellAdd')}</span>{/if}
-							{#if pend}<span class="cell__pend" aria-label="未保存"></span>{/if}
+							{#if pend}<span class="cell__pend" aria-label={t(L, 'dash.pending')}></span>{/if}
 						</button>
 					{/if}
 				{/if}

@@ -5,12 +5,13 @@ import { sendEmail, buildBookingEmailData, type EmailEnv } from '$lib/server/ema
 import type { RequestHandler } from './$types';
 
 // Day-before pickup reminders. Schedule externally (Pages has no native cron):
-// e.g. daily at JST 06:00. Idempotency key includes the pickup date so re-runs
-// never double-send.
-async function run(platform: App.Platform | undefined, request: Request) {
+// e.g. daily at JST 06:00, POST with `x-cron-secret: $CRON_SECRET`. Fail-closed:
+// refuses to run without a secret configured. Idempotency key includes the
+// pickup date so re-runs never double-send.
+export const POST: RequestHandler = async ({ platform, request }) => {
 	const env = platform?.env as unknown as EmailEnv & { CRON_SECRET?: string };
-	const secret = request.headers.get('x-cron-secret');
-	if (env?.CRON_SECRET && secret !== env.CRON_SECRET) throw error(401, 'unauthorized');
+	if (!env?.CRON_SECRET) throw error(500, 'CRON_SECRET is not configured');
+	if (request.headers.get('x-cron-secret') !== env.CRON_SECRET) throw error(401, 'unauthorized');
 
 	const db = getDb(platform);
 	const today = jstDateStr(nowIso());
@@ -36,7 +37,7 @@ async function run(platform: App.Platform | undefined, request: Request) {
 	let sent = 0;
 	for (const res of rows) {
 		const pickupDate = jstDateStr(res.pickup_scheduled_at);
-		const { data, customerEmail } = await buildBookingEmailData(
+		const { data, customerEmail, locale } = await buildBookingEmailData(
 			db,
 			res as unknown as Parameters<typeof buildBookingEmailData>[1],
 			baseUrl
@@ -46,14 +47,12 @@ async function run(platform: App.Platform | undefined, request: Request) {
 			kind: 'reminder',
 			idempotencyKey: `reminder/${res.code}/${pickupDate}`,
 			to: customerEmail,
+			locale,
 			reservationId: res.id,
 			data
 		});
 		if (r.status === 'sent') sent++;
 	}
 
-	return { ok: true, candidates: rows.length, sent };
-}
-
-export const POST: RequestHandler = async ({ platform, request }) => json(await run(platform, request));
-export const GET: RequestHandler = async ({ platform, request }) => json(await run(platform, request));
+	return json({ ok: true, candidates: rows.length, sent });
+};

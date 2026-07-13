@@ -71,7 +71,7 @@
 
 <svelte:head>
 	<title>{t(L, 'rsv.title')} — MILES 158</title>
-	<meta name="description" content="MILES 158 のオンライン予約。Lexus LC500 / LM500 の空き状況確認・ご予約。" />
+	<meta name="description" content="MILES 158 のオンライン予約。Land Cruiser FJ VX / Alphard Hybrid Z の空き状況確認・ご予約。" />
 </svelte:head>
 
 <main class="Reserve">
@@ -103,7 +103,6 @@
 			{#if blocked}
 				<div class="Reserve__notice Reserve__notice--block">
 					<p>{blockMessage(L)}</p>
-					<a class="btn-outline btn-outline--sm" href="mailto:info@miles158.jp?subject=Chauffeur%20Inquiry">{t(L, 'rsv.charterCta')}</a>
 				</div>
 			{:else if eligible && selectedLicense}
 				<div class="Reserve__notice">
@@ -130,7 +129,7 @@
 								<p class="Reserve__car-sub">{v.subtitle ?? v.class_name}</p>
 								<p class="Reserve__car-price">
 									<span class="Reserve__car-from">{t(L, 'rsv.perDay')}</span>
-									<span class="Reserve__car-amount">{formatJpy(v.base_rate_24h)}〜</span>
+									<span class="Reserve__car-amount">{t(L, 'rsv.fromPrice', { price: formatJpy(v.base_rate_24h, L) })}</span>
 									<span class="Reserve__car-tax">{t(L, 'rsv.taxExcl')}</span>
 								</p>
 							</div>
@@ -167,7 +166,7 @@
 								minDate={addDaysStr(data.today, 3)}
 							/>
 							<p class="Reserve__cal-note">{t(L, 'rsv.calTaxNote')}</p>
-							<p class="Reserve__cal-note">{t(L, 'rsv.calLeadNote')}<a class="Reserve__cal-link" href="mailto:info@miles158.jp?subject=Last-minute%20Inquiry">{t(L, 'rsv.calLeadLink')}</a>{t(L, 'rsv.calLeadTail')}</p>
+							<p class="Reserve__cal-note">{t(L, 'rsv.calLeadNote')}<a class="Reserve__cal-link" href="mailto:hi@miles158.com?subject=Last-minute%20Inquiry">{t(L, 'rsv.calLeadLink')}</a>{t(L, 'rsv.calLeadTail')}</p>
 						</div>
 
 						<aside class="Reserve__cart">
@@ -176,14 +175,14 @@
 							{#if cart}
 								<p class="Reserve__cart-range">{pickup} {pickupTime}<br />〜 {returnDate} {returnTime}</p>
 								<dl class="Reserve__cart-sum">
-									<div><dt>{t(L, 'rsv.cartRental', { d: cart.days })}</dt><dd>{formatJpy(cart.base)}</dd></div>
+									<div><dt>{t(L, 'rsv.cartRental', { d: cart.days })}</dt><dd>{formatJpy(cart.base, L)}</dd></div>
 									{#if cart.discount > 0}
-										<div class="is-discount"><dt>{t(L, 'rsv.cartDiscount', { p: cart.discountPercent })}</dt><dd>−{formatJpy(cart.discount)}</dd></div>
+										<div class="is-discount"><dt>{t(L, 'rsv.cartDiscount', { p: cart.discountPercent })}</dt><dd>−{formatJpy(cart.discount, L)}</dd></div>
 									{/if}
-									<div><dt>{t(L, 'rsv.cartTax')}</dt><dd>{formatJpy(cart.tax)}</dd></div>
-									<div class="Reserve__cart-total"><dt>{t(L, 'rsv.cartSubtotal')}</dt><dd>{formatJpy(cart.total)}</dd></div>
+									<div><dt>{t(L, 'rsv.cartTax')}</dt><dd>{formatJpy(cart.tax, L)}</dd></div>
+									<div class="Reserve__cart-total"><dt>{t(L, 'cfg.total')}</dt><dd>{formatJpy(cart.total, L)}</dd></div>
 								</dl>
-								<p class="Reserve__cart-note">{t(L, 'rsv.cartNote', { dep: formatJpy(selected.deposit_amount) })}</p>
+								<p class="Reserve__cart-note">{t(L, 'rsv.cartNote', { dep: formatJpy(selected.deposit_amount, L) })}</p>
 								{#if form?.message}<p class="Reserve__error">{form.message}</p>{/if}
 								<form method="POST" action="?/select" use:enhance>
 									<input type="hidden" name="licenseKind" value={licenseKind} />

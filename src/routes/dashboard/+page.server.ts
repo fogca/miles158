@@ -3,11 +3,13 @@ import { getDb } from '$lib/server/db';
 import { nowIso, jstDateStr } from '$lib/time';
 import { addBlackout, removeBlackout, BLACKOUT_RES_ID } from '$lib/server/inventory';
 import { audit } from '$lib/server/audit';
+import { t } from '$lib/i18n';
 import type { Actions, PageServerLoad } from './$types';
 
 const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+const MONTH_TAG = { ja: 'ja-JP', en: 'en-US', zh: 'zh-CN' } as const;
 
-export const load: PageServerLoad = async ({ url, platform }) => {
+export const load: PageServerLoad = async ({ url, platform, locals }) => {
 	const db = getDb(platform);
 	const today = jstDateStr(nowIso());
 
@@ -65,7 +67,10 @@ export const load: PageServerLoad = async ({ url, platform }) => {
 		offset,
 		year,
 		month, // 0-indexed
-		monthLabel: `${year}年 ${month + 1}月`,
+		monthLabel: new Intl.DateTimeFormat(MONTH_TAG[locals.locale] ?? 'ja-JP', {
+			year: 'numeric',
+			month: 'long'
+		}).format(new Date(Date.UTC(year, month, 1))),
 		monthStart,
 		monthEnd,
 		dayMap,
@@ -83,7 +88,7 @@ export const actions: Actions = {
 		const vehicleId = String(f.get('vehicleId') ?? '');
 		const monthStart = String(f.get('monthStart') ?? '');
 		const monthEnd = String(f.get('monthEnd') ?? '');
-		if (!vehicleId || !monthStart || !monthEnd) return fail(400, { message: '保存に必要な情報が不足しています。' });
+		if (!vehicleId || !monthStart || !monthEnd) return fail(400, { message: t(locals.locale, 'dash.errSaveMissing') });
 
 		const desired = new Set(
 			String(f.get('dates') ?? '')

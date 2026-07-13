@@ -5,6 +5,7 @@ import { computeQuote } from '$lib/server/pricing-data';
 import { createHold } from '$lib/server/inventory';
 import { createCustomer } from '$lib/server/customer';
 import { transitionReservation } from '$lib/server/reservation';
+import { t } from '$lib/i18n';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ platform }) => {
@@ -36,14 +37,14 @@ export const actions: Actions = {
 		const cdwSelected = f.get('cdw') === 'on';
 
 		if (!vehicleId || !pickupDate || !returnDate || returnDate < pickupDate || !nameFamily) {
-			return fail(400, { message: '車両・期間・お名前は必須です。', values: Object.fromEntries(f) });
+			return fail(400, { message: t(locals.locale, 'nb.errRequired'), values: Object.fromEntries(f) });
 		}
 
 		const veh = await db
 			.prepare('SELECT class_id FROM vehicles WHERE id = ?')
 			.bind(vehicleId)
 			.first<{ class_id: string }>();
-		if (!veh) return fail(400, { message: '車両が見つかりません。' });
+		if (!veh) return fail(400, { message: t(locals.locale, 'nb.errNoVehicle') });
 
 		const pickupAt = jstDateToUtc(pickupDate, pickupTime);
 		const returnAt = jstDateToUtc(returnDate, returnTime);
@@ -80,7 +81,7 @@ export const actions: Actions = {
 			reservationId = hold.reservationId;
 		} catch (err) {
 			if (err instanceof SlotConflictError) {
-				return fail(409, { message: '選択期間はすでに予約済みです。' });
+				return fail(409, { message: t(locals.locale, 'nb.errTaken') });
 			}
 			throw err;
 		}

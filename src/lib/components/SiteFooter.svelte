@@ -19,10 +19,12 @@
 		{ label: 'Contact', href: 'mailto:hi@miles158.com' }
 	];
 
-	const LEGAL: LinkItem[] = [
-		{ label: 'Privacy', href: '/legal/privacy' },
-		{ label: 'Imprint', href: '/legal/imprint' }
-	];
+	const LEGAL: LinkItem[] = $derived([
+		{ label: t(L, 'footer.legalTerms'), href: '/terms' },
+		{ label: t(L, 'footer.legalInsurance'), href: '/legal/insurance' },
+		{ label: t(L, 'footer.legalPrivacy'), href: '/legal/privacy' },
+		{ label: t(L, 'footer.legalTokushohou'), href: '/legal/tokushohou' }
+	]);
 
 	const YEAR = new Date().getFullYear();
 </script>
@@ -39,7 +41,7 @@
 			<p class="SiteFooter__tagline" style="white-space: pre-line">{t(L, 'footer.tagline')}</p>
 			<ul class="SiteFooter__langs" aria-label="Language">
 				{#each LOCALES as loc (loc)}
-					<li><a href={switchLocalePath(page.url.pathname, loc)} class:is-active={loc === L} data-sveltekit-reload>{LOCALE_LABELS[loc]}</a></li>
+					<li><a href={switchLocalePath(page.url.pathname, loc) + page.url.search + page.url.hash} class:is-active={loc === L} data-sveltekit-reload>{LOCALE_LABELS[loc]}</a></li>
 				{/each}
 			</ul>
 		</div>

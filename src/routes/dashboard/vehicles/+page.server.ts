@@ -2,6 +2,7 @@ import { fail } from '@sveltejs/kit';
 import { getDb, genId } from '$lib/server/db';
 import { nowIso } from '$lib/time';
 import { audit } from '$lib/server/audit';
+import { t } from '$lib/i18n';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ platform }) => {
@@ -30,7 +31,7 @@ export const actions: Actions = {
 		const classId = String(f.get('class_id') ?? '');
 		const reg = String(f.get('registration_number') ?? '').trim();
 		if (!displayName || !classId || !reg) {
-			return fail(400, { message: '車名・クラス・登録番号は必須です。' });
+			return fail(400, { message: t(locals.locale, 'vh.errRequired') });
 		}
 		const id = genId();
 		const now = nowIso();
@@ -43,7 +44,7 @@ export const actions: Actions = {
 				.bind(id, classId, displayName, String(f.get('subtitle') ?? '') || null, reg, String(f.get('color') ?? '') || null, now, now)
 				.run();
 		} catch {
-			return fail(409, { message: 'この登録番号は既に存在します。' });
+			return fail(409, { message: t(locals.locale, 'vh.errDupReg') });
 		}
 		await audit(db, { actor: `staff:${locals.staff?.id}`, action: 'vehicle.create', entity: 'vehicle', entityId: id, after: { displayName, reg } });
 		return { ok: true };
@@ -54,7 +55,7 @@ export const actions: Actions = {
 		const f = await request.formData();
 		const id = String(f.get('id') ?? '');
 		const status = String(f.get('status') ?? '');
-		if (!['active', 'maintenance', 'retired'].includes(status)) return fail(400, { message: '不正な状態です。' });
+		if (!['active', 'maintenance', 'retired'].includes(status)) return fail(400, { message: t(locals.locale, 'vh.errBadStatus') });
 		await db.prepare('UPDATE vehicles SET status = ?, updated_at = ? WHERE id = ?').bind(status, nowIso(), id).run();
 		await audit(db, { actor: `staff:${locals.staff?.id}`, action: 'vehicle.status', entity: 'vehicle', entityId: id, after: { status } });
 		return { ok: true };

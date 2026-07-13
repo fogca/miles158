@@ -34,7 +34,7 @@
 </script>
 
 <svelte:head>
-	<title>ご予約完了 — MILES 158</title>
+	<title>{heading.title} — MILES 158</title>
 	{@html `<script type="application/ld+json">${jsonLd}</scr` + `ipt>`}
 </svelte:head>
 
@@ -45,7 +45,7 @@
 		{/if}
 		<div class="Done__card" class:is-cancelled={isCancelled}>
 			<p class="Done__eyebrow" lang="en">{heading.eyebrow}</p>
-			<h1 class="Done__title" lang="ja">{heading.title}</h1>
+			<h1 class="Done__title">{heading.title}</h1>
 			<p class="Done__code">{r.code}</p>
 
 			{#if data.vehicle}
@@ -53,7 +53,7 @@
 					{#if data.vehicle.image_url}<img src={data.vehicle.image_url} alt={data.vehicle.display_name} />{/if}
 					<div>
 						<p class="Done__veh-name">{data.vehicle.display_name}</p>
-						<p class="Done__veh-sub" lang="ja">{data.vehicle.subtitle ?? ''}</p>
+						<p class="Done__veh-sub">{data.vehicle.subtitle ?? ''}</p>
 					</div>
 				</div>
 			{/if}
@@ -61,8 +61,8 @@
 			<dl class="Done__detail">
 				{#if r.pickupAt}<div><dt>{t(L, 'done.pickup')}</dt><dd>{formatJst(r.pickupAt, L)}</dd></div>{/if}
 				{#if r.returnAt}<div><dt>{t(L, 'done.return')}</dt><dd>{formatJst(r.returnAt, L)}</dd></div>{/if}
-				<div><dt>{t(L, 'done.total')}</dt><dd>{formatJpy(r.total ?? 0)}</dd></div>
-				<div><dt>{t(L, 'done.deposit')}</dt><dd>{formatJpy(r.deposit ?? 0)}</dd></div>
+				<div><dt>{t(L, 'done.total')}</dt><dd>{formatJpy(r.total ?? 0, L)}</dd></div>
+				<div><dt>{t(L, 'done.deposit')}</dt><dd>{formatJpy(r.deposit ?? 0, L)}</dd></div>
 			</dl>
 
 			<div class="Done__next">

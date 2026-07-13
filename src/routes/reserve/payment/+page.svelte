@@ -30,7 +30,7 @@
 			{#if data.vehicle}
 				<p class="Pay__veh">
 					{data.vehicle.display_name}
-					{#if data.reservation.pickupAt} ・ {formatJst(data.reservation.pickupAt)} 〜 {data.reservation.returnAt ? formatJst(data.reservation.returnAt) : ''}{/if}
+					{#if data.reservation.pickupAt} ・ {formatJst(data.reservation.pickupAt, L)} 〜 {data.reservation.returnAt ? formatJst(data.reservation.returnAt, L) : ''}{/if}
 				</p>
 			{/if}
 		</header>
@@ -50,7 +50,7 @@
 									<td class="Pay__pct">{r.feePercent}%</td>
 								</tr>
 							{/each}
-							<tr><td>{t(L, 'pay.noShow')}</td><td class="Pay__pct">100%</td></tr>
+							<tr><td>{t(L, 'pay.noShow')}</td><td class="Pay__pct">50%</td></tr>
 						</tbody>
 					</table>
 					<p class="Pay__note">{t(L, 'pay.feeNote')}</p>
@@ -73,12 +73,22 @@
 				</section>
 			</div>
 
-			<!-- Summary + agreement -->
+			<!-- Summary + agreement (最終確認: 特商法12条の6 — 車種・期間・支払額・保証金を明示) -->
 			<aside class="Pay__summary">
 				<dl class="Pay__sum">
-					<div class="Pay__sum-total"><dt>{t(L, 'pay.total')}</dt><dd>{formatJpy(data.reservation.total ?? 0)}</dd></div>
-					<div><dt>{t(L, 'pay.deposit')}</dt><dd>{formatJpy(data.reservation.deposit ?? 0)}</dd></div>
+					{#if data.vehicle}
+						<div><dt>{t(L, 'dt.kVehicle')}</dt><dd>{data.vehicle.display_name}</dd></div>
+					{/if}
+					{#if data.reservation.pickupAt}
+						<div><dt>{t(L, 'done.pickup')}</dt><dd>{formatJst(data.reservation.pickupAt, L)}</dd></div>
+					{/if}
+					{#if data.reservation.returnAt}
+						<div><dt>{t(L, 'done.return')}</dt><dd>{formatJst(data.reservation.returnAt, L)}</dd></div>
+					{/if}
+					<div class="Pay__sum-total"><dt>{t(L, 'pay.total')}</dt><dd>{formatJpy(data.reservation.total ?? 0, L)}</dd></div>
+					<div><dt>{t(L, 'pay.deposit')}</dt><dd>{formatJpy(data.reservation.deposit ?? 0, L)}</dd></div>
 				</dl>
+				<p class="Pay__deposit-note">{t(L, 'pay.depositNote', { dep: formatJpy(data.reservation.deposit ?? 0, L) })}</p>
 
 				<form method="POST" action="?/pay" use:enhance>
 					<input type="hidden" name="method" value={method} />
@@ -86,6 +96,7 @@
 						<input type="checkbox" name="agree" required />
 						<span>{t(L, 'pay.agreePre')}<a href={lhref(L, '/terms')} target="_blank" rel="noopener">{t(L, 'pay.terms')}</a>{t(L, 'pay.and')}<a href={lhref(L, '/legal/privacy')} target="_blank" rel="noopener">{t(L, 'pay.privacy')}</a>{t(L, 'pay.agreePost')}</span>
 					</label>
+					<p class="Pay__lang-note">{t(L, 'pay.langNote')}</p>
 					{#if form?.message}<p class="Pay__error">{form.message}</p>{/if}
 					<button type="submit" class="btn-outline Pay__submit">{t(L, 'pay.submit')}</button>
 				</form>
@@ -143,7 +154,9 @@
 	.Pay__sum dd { margin: 0; font-feature-settings: 'tnum'; }
 	.Pay__sum-total { font-size: var(--fs-h4) !important; border-bottom: 1px solid var(--color-line); margin-bottom: var(--space-2); padding-bottom: var(--space-3) !important; }
 	.Pay__sum-total dd { font-weight: 500; }
-	.Pay__agree { display: flex; gap: var(--space-3); align-items: flex-start; margin: var(--space-5) 0; font-size: var(--fs-h6); line-height: 1.6; }
+	.Pay__deposit-note { font-size: var(--fs-h6); opacity: 0.6; line-height: 1.6; margin: var(--space-3) 0 0; }
+	.Pay__lang-note { font-size: var(--fs-h6); opacity: 0.55; line-height: 1.6; margin: 0 0 var(--space-4); }
+	.Pay__agree { display: flex; gap: var(--space-3); align-items: flex-start; margin: var(--space-5) 0 var(--space-2); font-size: var(--fs-h6); line-height: 1.6; }
 	.Pay__agree input { margin-top: 3px; accent-color: var(--color-accent); }
 	.Pay__agree a { text-decoration: underline; }
 	.Pay__error { color: var(--color-accent); font-size: var(--fs-h6); margin-bottom: var(--space-3); }
