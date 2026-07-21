@@ -212,6 +212,14 @@
 		object-fit: cover;
 	}
 
+	/* PC: the two cars sit side by side — a square crop cuts into the studio
+	   shots (~3:2). Widen the frame so the full car reads without cropping. */
+	@media (min-width: 1024px) {
+		.car-image {
+			aspect-ratio: 3 / 2;
+		}
+	}
+
 	.car-meta h3 {
 		margin: 0 0 0.4em 0;
 	}
