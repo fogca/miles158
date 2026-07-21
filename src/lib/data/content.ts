@@ -1,15 +1,12 @@
 // MILES 158 — content registry
-// Images alternate between car_10.png and LC500.png while final assets are pending.
+// Fleet imagery (2026-07): Land Cruiser FJ / Alphard official-style shots,
+// compressed to WebP via scripts/img-webp.mjs (sources kept in _assets_src/).
 
-const IMG_A = '/images/car_10.png';
-const IMG_B = '/images/LC500.png';
-const IMG_C = '/images/car_02.png';
-const IMG_D = '/images/LM500.png';
-const IMG_E = '/images/car_03.png';
-const IMG_F = '/images/car_01.jpg';
-const IMG_G = '/images/car_04.png';
-const IMG_H = '/images/car_05.jpg';
-const ROTATION = [IMG_A, IMG_B, IMG_C, IMG_D, IMG_E, IMG_F, IMG_G, IMG_H];
+const IMG_A = '/images/scene-aerial.webp';
+const IMG_B = '/images/scene-machiya.webp';
+const IMG_C = '/images/scene-coast.webp';
+const IMG_D = '/images/scene-mountain.webp';
+const ROTATION = [IMG_A, IMG_B, IMG_C, IMG_D];
 const alt = (i: number) => ROTATION[i % ROTATION.length];
 
 export type Slide = {
@@ -40,7 +37,7 @@ export const hero = {
 	bigTitle: ['Discover', 'the Sky'],
 	leadJa: ['車と走る喜びをもっと身近に。', 'さぁ旅にでよう'],
 	ctaLabel: 'Explore',
-	bgImage: IMG_F
+	bgImage: IMG_C
 };
 
 // Concept Parallax (mirrors avatr's .home_para — text reveal then image)
@@ -50,8 +47,8 @@ export const conceptParallax = {
 		'マイルズ158は<br class="sp-br">名古屋西区の国道158号線沿いに誕生した<br class="sp-br">車好きのためのカーラウンジです。<br class="sp-br"><br class="sp-br">カーレンタル、クラブカフェ、<br class="sp-br">クラブコミュニティ― 車と過ごす時間を<br class="sp-br">豊かに、そして身近にするためのサービスを、<br class="sp-br">ひとつの建物にまとめました。',
 		'さぁ、車と旅にでよう。'
 	],
-	// Vis1: car_07 (Vis2 was removed; CTA now layers on top of Vis1)
-	image: '/images/car_07.png'
+	// Vis1 — Alphard at a machiya street at dusk (Vis2 was removed; CTA layers on top)
+	image: '/images/scene-machiya.webp'
 };
 
 // Concept Visual — 4 slides
@@ -116,10 +113,10 @@ export const services: Service[] = [
 
 // Service slides — used by StorySlider
 const serviceSlideImages: Record<string, string> = {
-	rental: '/images/car_05.png',
-	cafe: '/images/car_03.png',
-	community: '/images/car_06.png',
-	cleaning: '/images/cleaning.png'
+	rental: '/images/scene-coast.webp',
+	cafe: '/images/scene-mountain.webp',
+	community: '/images/scene-aerial.webp',
+	cleaning: '/images/cleaning.webp'
 };
 export const serviceSlides: Slide[] = services.map((s, i) => ({
 	image: serviceSlideImages[s.id] ?? alt(i),
@@ -134,13 +131,13 @@ export const cars: Car[] = [
 	{
 		id: 'fj-vx',
 		name: 'Land Cruiser FJ VX',
-		image: '/images/LandCruiserFJ-VX.png',
+		image: '/images/LandCruiserFJ-VX.webp',
 		subtitle: 'Heritage Tourer · 2.7L 4WD'
 	},
 	{
 		id: 'alphard-z',
 		name: 'Alphard Hybrid Z',
-		image: '/images/AlphardHybrid-Z.png',
+		image: '/images/AlphardHybrid-Z.webp',
 		subtitle: 'Premium Lounge · Hybrid 7-Seater'
 	}
 ];
