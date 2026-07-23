@@ -63,6 +63,11 @@ export const dict = {
 		zh: '出发，租一台车<br class="sp-br" />去旅行吧。'
 	},
 	'common.viewMore': { ja: '詳しく見る', en: 'Learn more', zh: '了解更多' },
+	'home.ctaReserveTitle': {
+		ja: 'ご希望の車両はお決まりですか？<br class="sp-br" />今すぐご予約を。',
+		en: 'Found your car?<br class="sp-br" />Reserve it now.',
+		zh: '选好您的座驾了吗？<br class="sp-br" />即刻预约。'
+	},
 	'home.carsLead': {
 		ja: '厳選された2台のトヨタ — 走る喜びを最大化するラインアップです。',
 		en: 'Two carefully chosen Toyotas, selected to maximize the joy of driving.',

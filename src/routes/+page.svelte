@@ -107,10 +107,16 @@
 		</div>
 	</section>
 
+	<section class="reserve-cta" data-dark-section>
+		<div class="section-inner">
+			<h2 class="reserve-cta__title">{@html t(L, 'home.ctaReserveTitle')}</h2>
+			<a href={lhref(L, '/reserve')} class="btn-outline">{t(L, 'common.reserveCta')}</a>
+		</div>
+	</section>
+
 	<section class="place section">
 		<div class="section-inner">
 			<h2 class="section-title">Place</h2>
-			<p class="place-address">{t(L, 'home.place')}</p>
 			<div class="place-map">
 				<img src={place.mapImage} alt="MILES 158 location map" loading="lazy" />
 			</div>
@@ -229,10 +235,36 @@
 		margin: 0;
 	}
 
-	.place-address {
-		font-size: var(--fs-h3);
-		margin-bottom: var(--space-7);
-		opacity: 0.85;
+	/* ── Reserve CTA — simple banner between Cars and Place ── */
+	.reserve-cta {
+		background: var(--c-navy);
+		color: var(--c-sky);
+		padding: var(--space-10) 0;
+		text-align: center;
+	}
+
+	.reserve-cta .section-inner {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-6);
+	}
+
+	.reserve-cta__title {
+		font-size: var(--fs-h2);
+		max-width: 22ch;
+		line-height: 1.5;
+		margin: 0;
+		color: var(--c-sky);
+	}
+
+	.reserve-cta__title :global(br.sp-br) {
+		display: none;
+	}
+	@media (max-width: 767px) {
+		.reserve-cta__title :global(br.sp-br) {
+			display: inline;
+		}
 	}
 
 	.place-map {

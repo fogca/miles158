@@ -44,7 +44,6 @@ export const hero = {
 export const conceptParallax = {
 	texts: [
 		'マイルズ158へようこそ。<br>車と走る喜びをもっと身近に。',
-		'マイルズ158は<br class="sp-br">名古屋西区の国道158号線沿いに誕生した<br class="sp-br">車好きのためのカーラウンジです。<br class="sp-br"><br class="sp-br">カーレンタル、クラブカフェ、<br class="sp-br">クラブコミュニティ― 車と過ごす時間を<br class="sp-br">豊かに、そして身近にするためのサービスを、<br class="sp-br">ひとつの建物にまとめました。',
 		'さぁ、車と旅にでよう。'
 	],
 	// Vis1 — Alphard at a machiya street at dusk (Vis2 was removed; CTA layers on top)

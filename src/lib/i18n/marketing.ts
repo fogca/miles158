@@ -28,12 +28,10 @@ export function getHero(locale: Locale) {
 const CP_TEXTS: Record<Exclude<Locale, 'ja'>, string[]> = {
 	en: [
 		'Welcome to MILES 158.<br>Bringing the joy of driving closer.',
-		'MILES 158 is a car lounge<br class="sp-br">born on Route 158 in Nishi-ku, Nagoya,<br class="sp-br">made for people who love cars.<br class="sp-br"><br class="sp-br">Car rental, a club cafe,<br class="sp-br">a members’ community — everything that makes<br class="sp-br">time with cars richer and closer,<br class="sp-br">gathered under one roof.',
 		'Now — let’s go for a drive.'
 	],
 	zh: [
 		'欢迎来到 MILES 158。<br>让驾驶的乐趣触手可及。',
-		'MILES 158 诞生于名古屋西区<br class="sp-br">国道158号沿线，<br class="sp-br">是一间为爱车之人而设的汽车俱乐部。<br class="sp-br"><br class="sp-br">汽车租赁、俱乐部咖啡、<br class="sp-br">车主社区——让与车相处的时光<br class="sp-br">更丰盈、更亲近的一切，<br class="sp-br">都汇聚在同一屋檐下。',
 		'现在，与车一起出发吧。'
 	]
 };
