@@ -633,7 +633,7 @@ input::placeholder {
 }
 
 .btn-glass:lang(ja) {
-	font-family: var(--font-ja);
+	font-family: 'ABC Arizona Flare', var(--font-ja);
 }
 
 /* Top specular highlight — inherits the pill shape exactly */
@@ -759,7 +759,7 @@ input::placeholder {
 }
 
 .btn-outline:lang(ja) {
-	font-family: var(--font-ja);
+	font-family: 'ABC Arizona Flare', var(--font-ja);
 }
 
 .btn-outline:hover {
