@@ -48,7 +48,7 @@
 
 		<!-- Column 2: site nav -->
 		<nav class="SiteFooter__col" aria-label="Footer navigation">
-			<h3 class="SiteFooter__heading">Site</h3>
+			<h3 class="SiteFooter__heading" lang="en">Site</h3>
 			<ul class="SiteFooter__list">
 				{#each SITE_NAV as item (item.href)}
 					<li><a href={l(L, item.href)}>{item.label}</a></li>
@@ -58,7 +58,7 @@
 
 		<!-- Column 3: contact / social -->
 		<div class="SiteFooter__col">
-			<h3 class="SiteFooter__heading">Get in touch</h3>
+			<h3 class="SiteFooter__heading" lang="en">Get in touch</h3>
 			<ul class="SiteFooter__list">
 				{#each CONTACT as item (item.href)}
 					<li>
@@ -74,7 +74,7 @@
 
 		<!-- Column 4: reservation CTA -->
 		<div class="SiteFooter__col SiteFooter__col--cta">
-			<h3 class="SiteFooter__heading">Visit Us</h3>
+			<h3 class="SiteFooter__heading" lang="en">Visit Us</h3>
 			<p class="SiteFooter__note">{t(L, 'footer.visitNote')}</p>
 			<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm SiteFooter__cta"
 				>{t(L, 'common.reserveCta')}</a

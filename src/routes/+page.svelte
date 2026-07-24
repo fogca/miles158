@@ -67,7 +67,7 @@
 				style="opacity: {enter}; transform: translateY({(1 - enter) * 30}px);"
 			>
 				<div class="hero-content__bottom">
-					<h2 class="hero-content__bigtitle">
+					<h2 class="hero-content__bigtitle" lang="en">
 						{#each hero.bigTitle as line, i (i)}
 							<span class="line">{line}</span>
 						{/each}
@@ -77,7 +77,7 @@
 							<span>{line}</span><br />
 						{/each}
 					</p>
-					<a href={lhref(L, '/about')} class="btn-outline btn-outline--sm">{hero.ctaLabel}</a>
+					<a href={lhref(L, '/about')} class="btn-outline btn-outline--sm" lang="en">{hero.ctaLabel}</a>
 				</div>
 			</div>
 		{/snippet}
@@ -89,7 +89,7 @@
 
 	<section class="cars section">
 		<div class="section-inner">
-			<h2 class="section-title">Cars</h2>
+			<h2 class="section-title" lang="en">Cars</h2>
 			<p class="cars-lead">{t(L, 'home.carsLead')}</p>
 			<div class="cars-grid">
 				{#each cars as car (car.id)}
@@ -98,7 +98,7 @@
 							<img src={car.image} alt={car.name} loading="lazy" />
 						</div>
 						<div class="car-meta">
-							<h3>{car.name}</h3>
+							<h3 lang="en">{car.name}</h3>
 							<p>{car.subtitle}</p>
 						</div>
 					</article>
@@ -116,7 +116,7 @@
 
 	<section class="place section">
 		<div class="section-inner">
-			<h2 class="section-title">Place</h2>
+			<h2 class="section-title" lang="en">Place</h2>
 			<div class="place-map">
 				<img src={place.mapImage} alt="MILES 158 location map" loading="lazy" />
 			</div>

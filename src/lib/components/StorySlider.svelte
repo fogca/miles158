@@ -117,7 +117,7 @@
 		{#if slides[activeIndex]}
 			{#key activeIndex}
 				<div class="content">
-					<h2 class="title">{@html slides[activeIndex].title}</h2>
+					<h2 class="title" lang="en">{@html slides[activeIndex].title}</h2>
 					<p class="desc">{slides[activeIndex].description}</p>
 				</div>
 			{/key}
@@ -128,7 +128,7 @@
 				<li>
 					<button type="button" onclick={() => jumpTo(i)} class:active={i === activeIndex}>
 						<span class="bar"><span class="fill" style="width:{barFill(i)}%"></span></span>
-						<span class="label">{String(i + 1).padStart(2, '0')} · {slide.label}</span>
+						<span class="label" lang="en">{String(i + 1).padStart(2, '0')} · {slide.label}</span>
 					</button>
 				</li>
 			{/each}

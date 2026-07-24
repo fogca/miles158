@@ -43,7 +43,7 @@
 	<div class="Rental__inner">
 		<!-- Hero: title LEFT, lead RIGHT on PC (same split pattern as below). -->
 		<section class="Rental__block Rental__split Rental__hero section">
-			<h1 class="section-title Rental__split-title">Car Rental</h1>
+			<h1 class="section-title Rental__split-title" lang="en">Car Rental</h1>
 			<div class="Rental__split-body">
 				<p class="Rental__lead">{service.description}</p>
 			</div>
@@ -51,7 +51,7 @@
 		<!-- Lineup + pricing -->
 		<section class="Rental__block Rental__split Rental__lineup section">
 			<header class="Rental__section-head">
-				<p class="Rental__eyebrow">Lineup &amp; Pricing</p>
+				<p class="Rental__eyebrow" lang="en">Lineup &amp; Pricing</p>
 				<h2 class="section-title Rental__split-title" >{t(L, 'rental.lineup')}</h2>
 			</header>
 
@@ -65,7 +65,7 @@
 
 						<div class="Rental__car-body">
 							<header class="Rental__car-head">
-								<h3 class="Rental__car-name">{car.name}</h3>
+								<h3 class="Rental__car-name" lang="en">{car.name}</h3>
 								<p class="Rental__car-sub">{car.subtitle}</p>
 							</header>
 
@@ -88,7 +88,7 @@
 								</dl>
 							{:else}
 								<p class="Rental__coming-soon">
-									<span class="Rental__coming-badge">Coming Soon</span>
+									<span class="Rental__coming-badge" lang="en">Coming Soon</span>
 									{t(L, 'rental.comingSoon')}
 								</p>
 							{/if}
@@ -102,7 +102,7 @@
 		<!-- Flow -->
 		<section class="Rental__block Rental__split Rental__flow section">
 			<header class="Rental__section-head">
-				<p class="Rental__eyebrow">How to Rent</p>
+				<p class="Rental__eyebrow" lang="en">How to Rent</p>
 				<h2 class="section-title Rental__split-title" >{t(L, 'rental.flow')}</h2>
 			</header>
 
@@ -127,7 +127,7 @@
 		<!-- Conditions -->
 		<section class="Rental__block Rental__split Rental__conditions section">
 			<header class="Rental__section-head">
-				<p class="Rental__eyebrow">Requirements</p>
+				<p class="Rental__eyebrow" lang="en">Requirements</p>
 				<h2 class="section-title Rental__split-title" >{t(L, 'rental.conditions')}</h2>
 			</header>
 

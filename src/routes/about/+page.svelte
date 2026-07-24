@@ -42,14 +42,14 @@
 		</section>
 
 		<section class="About__block About__split About__services section">
-			<h2 class="section-title About__split-title">4 Services</h2>
+			<h2 class="section-title About__split-title" lang="en">4 Services</h2>
 			<div class="About__split-body">
 				<div class="About__services-grid">
 					{#each services as service (service.id)}
 						<article class="About__service">
 							<header>
-								<p class="About__service-num">Service {service.number}</p>
-								<h3 class="About__service-name">{service.name}</h3>
+								<p class="About__service-num" lang="en">Service {service.number}</p>
+								<h3 class="About__service-name" lang="en">{service.name}</h3>
 							</header>
 							<p class="About__service-desc">{service.description}</p>
 						</article>

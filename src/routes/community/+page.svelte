@@ -28,7 +28,7 @@
 <main class="page">
 	<section class="hero section">
 		<div class="section-inner">
-			<h1 class="section-title">Club Community</h1>
+			<h1 class="section-title" lang="en">Club Community</h1>
 			<p class="lead">{service.description}</p>
 		</div>
 	</section>
