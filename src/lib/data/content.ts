@@ -128,13 +128,6 @@ export const cars: Car[] = [
 	}
 ];
 
-// Place
-export const place = {
-	address: '愛知県名古屋市西区',
-	roadHint: '国道158号沿い',
-	mapImage: '/images/place.JPG'
-};
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Rental — pricing, flow, conditions
 // Prices are tax-exclusive; the rental page renders straight from this.

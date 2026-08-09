@@ -5,7 +5,7 @@
 	import ScrollVideo from '$lib/stock/animation/scroll-video/ScrollVideo.svelte';
 	import LogoMain from '$lib/components/LogoMain.svelte';
 	import { page } from '$app/state';
-	import { cars, place } from '$lib/data/content';
+	import { cars } from '$lib/data/content';
 	import { getHero, getServiceSlides } from '$lib/i18n/marketing';
 	import { t, l as lhref, type Locale } from '$lib/i18n';
 	import { RESERVATIONS_OPEN } from '$lib/config';
@@ -116,15 +116,6 @@
 			</div>
 		</section>
 	{/if}
-
-	<section class="place section">
-		<div class="section-inner">
-			<h2 class="section-title" lang="en">Place</h2>
-			<div class="place-map">
-				<img src={place.mapImage} alt="MILES 158 location map" loading="lazy" />
-			</div>
-		</div>
-	</section>
 </main>
 
 <style>
@@ -186,8 +177,7 @@
 		opacity: 0.95;
 	}
 
-	.cars,
-	.place {
+	.cars {
 		background: var(--c-white);
 	}
 
@@ -270,16 +260,4 @@
 		}
 	}
 
-	.place-map {
-		aspect-ratio: 21 / 9;
-		background: rgba(0, 10, 38, 0.05);
-		border-radius: 4px;
-		overflow: hidden;
-	}
-
-	.place-map img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
 </style>
