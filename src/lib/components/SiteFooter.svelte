@@ -2,16 +2,17 @@
 	import { page } from '$app/state';
 	import LogoMain from './LogoMain.svelte';
 	import { l, t, LOCALES, LOCALE_LABELS, switchLocalePath, type Locale } from '$lib/i18n';
+	import { RESERVATIONS_OPEN } from '$lib/config';
 
 	const L = $derived((page.data.locale ?? 'ja') as Locale);
 
 	type LinkItem = { label: string; href: string; external?: boolean };
 
+	// Club Community / Club Cafe are shelved — unlinked from nav, pages left
+	// in place in case they're revived later.
 	const SITE_NAV: LinkItem[] = [
 		{ label: 'About', href: '/about' },
-		{ label: 'Car Rental', href: '/rental' },
-		{ label: 'Club Community', href: '/community' },
-		{ label: 'Club Cafe', href: '/about#cafe' }
+		{ label: 'Car Rental', href: '/rental' }
 	];
 
 	const CONTACT: LinkItem[] = [
@@ -32,7 +33,7 @@
 <footer class="SiteFooter" data-dark-section aria-labelledby="site-footer-heading">
 	<h2 id="site-footer-heading" class="sr-only">MILES 158</h2>
 
-	<div class="SiteFooter__grid">
+	<div class="SiteFooter__grid" class:SiteFooter__grid--noCta={!RESERVATIONS_OPEN}>
 		<!-- Column 1: brand logo + place line -->
 		<div class="SiteFooter__col SiteFooter__col--brand">
 			<div class="SiteFooter__logo" aria-hidden="true">
@@ -72,14 +73,16 @@
 			</ul>
 		</div>
 
-		<!-- Column 4: reservation CTA -->
-		<div class="SiteFooter__col SiteFooter__col--cta">
-			<h3 class="SiteFooter__heading" lang="en">Visit Us</h3>
-			<p class="SiteFooter__note">{t(L, 'footer.visitNote')}</p>
-			<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm SiteFooter__cta"
-				>{t(L, 'common.reserveCta')}</a
-			>
-		</div>
+		<!-- Column 4: reservation CTA — hidden until the client approves going live -->
+		{#if RESERVATIONS_OPEN}
+			<div class="SiteFooter__col SiteFooter__col--cta">
+				<h3 class="SiteFooter__heading" lang="en">Visit Us</h3>
+				<p class="SiteFooter__note">{t(L, 'footer.visitNote')}</p>
+				<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm SiteFooter__cta"
+					>{t(L, 'common.reserveCta')}</a
+				>
+			</div>
+		{/if}
 	</div>
 
 	<div class="SiteFooter__bottom">
@@ -123,6 +126,9 @@
 			grid-template-columns: 2fr 1fr 1fr 1.5fr;
 			gap: var(--space-7);
 			align-items: start;
+		}
+		.SiteFooter__grid--noCta {
+			grid-template-columns: 2fr 1fr 1fr;
 		}
 	}
 

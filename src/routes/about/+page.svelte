@@ -11,17 +11,17 @@
 	<title>About — MILES 158</title>
 	<meta
 		name="description"
-		content="MILES 158 のブランド概要と 4 つのサービス（Car Rental / Club Community / Club Cafe / Cleaning）、会社概要。"
+		content="MILES 158 のブランド概要とサービス（Car Rental / Cleaning）、会社概要。"
 	/>
 	<meta property="og:title" content="About — MILES 158" />
 	<meta
 		property="og:description"
-		content="MILES 158 のブランド概要と 4 つのサービス。名古屋・西区。"
+		content="MILES 158 のブランド概要とサービス。名古屋・西区。"
 	/>
 	<meta name="twitter:title" content="About — MILES 158" />
 	<meta
 		name="twitter:description"
-		content="MILES 158 のブランド概要と 4 つのサービス。"
+		content="MILES 158 のブランド概要とサービス。"
 	/>
 </svelte:head>
 
@@ -42,7 +42,7 @@
 		</section>
 
 		<section class="About__block About__split About__services section">
-			<h2 class="section-title About__split-title" lang="en">4 Services</h2>
+			<h2 class="section-title About__split-title" lang="en">Services</h2>
 			<div class="About__split-body">
 				<div class="About__services-grid">
 					{#each services as service (service.id)}

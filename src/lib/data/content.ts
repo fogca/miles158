@@ -78,7 +78,10 @@ export const conceptSlides: Slide[] = [
 	}
 ];
 
-// 4 Services
+// Services — Club Community / Club Cafe are shelved (client decision,
+// 2026-08); kept out of the active lineup below. Their copy still lives in
+// marketing.ts (SERVICE_DESC en/zh) and the /community page in case they're
+// revived later.
 export const services: Service[] = [
 	{
 		id: 'rental',
@@ -88,22 +91,8 @@ export const services: Service[] = [
 			'私たちは、「車と走る喜びをもっと身近に」という想いのもと、上質な時間を過ごせる車両のレンタルサービスを行っております。期間は柔軟に対応しており、マンスリーサービスもございますので、お気軽にお問い合わせください。私たちの考えるカーレンタルは単に車そのものをお貸しするのではなく、その車と共に生まれる時間と体験をつくっていきたいと考えています。特別な瞬間 ― 記念日、旅、ただ走りたいその日 ― をより身近にするために活動しています。'
 	},
 	{
-		id: 'community',
-		number: '02',
-		name: 'Club Community',
-		description:
-			'私たちは、「車を愛する気持ちが人と人を長く結びつける」という想いのもと、車好きが集うプライベートなクラブコミュニティを運営しております。会員制で、同じ情熱を持つ仲間と時間・知識・物語を交わせる空間を整えています。会員制度や定例イベントについてはお気軽にお問い合わせください。私たちの考えるコミュニティは、単なる会員サービスではなく、同好の士が長く共に在れる精神的な拠点でありたいと考えています。出会いと再会を、より豊かなものにするために活動しています。'
-	},
-	{
-		id: 'cafe',
-		number: '03',
-		name: 'Club Cafe',
-		description:
-			'私たちは、「走る時間だけが車との時間ではない」という想いのもと、車文化が息づくカフェラウンジを運営しております。会員のみならず、一般のお客様にもご利用いただけますので、お気軽にお立ち寄りください。私たちの考えるカフェは、ただ飲食を提供する場ではなく、車と人が出会う「もうひとつの行程」を編み込む場所でありたいと考えています。走らない時間も豊かにするために活動しています。'
-	},
-	{
 		id: 'cleaning',
-		number: '04',
+		number: '02',
 		name: 'Cleaning',
 		description:
 			'私たちは、「美しい状態を保つことは車への敬意そのもの」という想いのもと、丁寧な洗車とメンテナンスを行っております。基本の洗車から内外装の本格的なディテーリングまで承りますので、お気軽にお問い合わせください。私たちの考えるクリーニングは、単に表面を整えるだけではなく、その車の尊厳と価値を長く保つための営みであると考えています。走るその瞬間に純粋な喜びをもたらすために活動しています。'
@@ -113,8 +102,6 @@ export const services: Service[] = [
 // Service slides — used by StorySlider
 const serviceSlideImages: Record<string, string> = {
 	rental: '/images/scene-coast.webp',
-	cafe: '/images/scene-mountain.webp',
-	community: '/images/scene-aerial.webp',
 	cleaning: '/images/cleaning.webp'
 };
 export const serviceSlides: Slide[] = services.map((s, i) => ({

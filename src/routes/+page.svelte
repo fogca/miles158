@@ -8,6 +8,7 @@
 	import { cars, place } from '$lib/data/content';
 	import { getHero, getServiceSlides } from '$lib/i18n/marketing';
 	import { t, l as lhref, type Locale } from '$lib/i18n';
+	import { RESERVATIONS_OPEN } from '$lib/config';
 
 	const L = (page.data.locale ?? 'ja') as Locale;
 	const hero = getHero(L);
@@ -107,12 +108,14 @@
 		</div>
 	</section>
 
-	<section class="reserve-cta" data-dark-section>
-		<div class="section-inner">
-			<h2 class="reserve-cta__title">{@html t(L, 'home.ctaReserveTitle')}</h2>
-			<a href={lhref(L, '/reserve')} class="btn-outline">{t(L, 'common.reserveCta')}</a>
-		</div>
-	</section>
+	{#if RESERVATIONS_OPEN}
+		<section class="reserve-cta" data-dark-section>
+			<div class="section-inner">
+				<h2 class="reserve-cta__title">{@html t(L, 'home.ctaReserveTitle')}</h2>
+				<a href={lhref(L, '/reserve')} class="btn-outline">{t(L, 'common.reserveCta')}</a>
+			</div>
+		</section>
+	{/if}
 
 	<section class="place section">
 		<div class="section-inner">

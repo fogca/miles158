@@ -22,9 +22,9 @@ export const dict = {
 		zh: 'MILES 158 — 名古屋汽车俱乐部与租车'
 	},
 	'meta.desc': {
-		ja: 'MILES 158 — 名古屋・西区に生まれた車好きのためのカーラウンジ。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンス。',
-		en: 'MILES 158 — a car lounge in Nishi-ku, Nagoya, for people who love cars. Car rental, club community, cafe lounge and maintenance.',
-		zh: 'MILES 158 — 诞生于名古屋西区、为爱车之人而设的汽车俱乐部。汽车租赁、车主社区、咖啡俱乐部与车辆养护。'
+		ja: 'MILES 158 — 名古屋・西区に生まれた車好きのためのカーラウンジ。カーレンタル、メンテナンス。',
+		en: 'MILES 158 — a car lounge in Nishi-ku, Nagoya, for people who love cars. Car rental and maintenance.',
+		zh: 'MILES 158 — 诞生于名古屋西区、为爱车之人而设的汽车俱乐部。汽车租赁与车辆养护。'
 	},
 	'err.404Title': { ja: 'ページが見つかりません', en: 'Page not found', zh: '未找到页面' },
 	'err.404Body': {
@@ -51,9 +51,9 @@ export const dict = {
 
 	// ---- home ----
 	'home.services': {
-		ja: 'カーレンタル / カフェラウンジ / クラブコミュニティ',
-		en: 'Car Rental / Cafe Lounge / Club Community',
-		zh: '汽车租赁 / 咖啡俱乐部 / 车主社区'
+		ja: 'カーレンタル / メンテナンス',
+		en: 'Car Rental / Maintenance',
+		zh: '汽车租赁 / 车辆养护'
 	},
 	'home.lead1': { ja: '車と走る喜びをもっと身近に。', en: 'Bringing the joy of driving closer.', zh: '让驾驶的乐趣触手可及。' },
 	'home.lead2': { ja: 'さぁ旅にでよう', en: 'Let’s hit the road.', zh: '出发，去旅行吧。' },
@@ -86,9 +86,9 @@ export const dict = {
 		zh: 'MILES 158 诞生于名古屋西区，<br />是一间为爱车之人而设的<br />汽车俱乐部。'
 	},
 	'about.introBody': {
-		ja: '「車と走る喜びをもっと身近に」 ― 私たちが見つめているのは、距離や所有の量ではなく、車と共に流れる時間の質です。カーレンタル、クラブコミュニティ、カフェラウンジ、メンテナンスという4つのサービスを通じて、車と過ごすあらゆる時間を豊かにしていきたいと考えています。',
-		en: '“Bringing the joy of driving closer” — what we care about is not distance or ownership, but the quality of time that flows with a car. Through four services — car rental, club community, cafe lounge and maintenance — we want to enrich every moment spent with cars.',
-		zh: '“让驾驶的乐趣触手可及”——我们在意的不是里程与拥有，而是与车共度时光的质量。通过汽车租赁、车主社区、咖啡俱乐部与养护这四项服务，让与车相处的每一刻都更加丰盈。'
+		ja: '「車と走る喜びをもっと身近に」 ― 私たちが見つめているのは、距離や所有の量ではなく、車と共に流れる時間の質です。カーレンタルとメンテナンスというサービスを通じて、車と過ごすあらゆる時間を豊かにしていきたいと考えています。',
+		en: '“Bringing the joy of driving closer” — what we care about is not distance or ownership, but the quality of time that flows with a car. Through car rental and maintenance, we want to enrich every moment spent with cars.',
+		zh: '“让驾驶的乐趣触手可及”——我们在意的不是里程与拥有，而是与车共度时光的质量。通过汽车租赁与养护服务，让与车相处的每一刻都更加丰盈。'
 	},
 	'about.companyTitle': { ja: '会社概要', en: 'Company', zh: '公司概要' },
 	'about.coName': { ja: '商号', en: 'Name', zh: '名称' },
@@ -100,9 +100,9 @@ export const dict = {
 	},
 	'about.coBiz': { ja: '事業内容', en: 'Business', zh: '业务内容' },
 	'about.coBizV': {
-		ja: 'カーレンタル / クラブコミュニティ / カフェラウンジ / メンテナンス',
-		en: 'Car Rental / Club Community / Cafe Lounge / Maintenance',
-		zh: '汽车租赁 / 车主社区 / 咖啡俱乐部 / 车辆养护'
+		ja: 'カーレンタル / メンテナンス',
+		en: 'Car Rental / Maintenance',
+		zh: '汽车租赁 / 车辆养护'
 	},
 	'about.coFounded': { ja: '設立', en: 'Founded', zh: '成立' },
 	'about.coContact': { ja: 'お問い合わせ', en: 'Contact', zh: '联系方式' },

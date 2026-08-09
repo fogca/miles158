@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import LogoSub from './LogoSub.svelte';
 	import { l, t, LOCALES, LOCALE_LABELS, switchLocalePath, localeFromPath, type Locale } from '$lib/i18n';
+	import { RESERVATIONS_OPEN } from '$lib/config';
 
 	let menuOpen = $state(false);
 	let langOpen = $state(false);
@@ -22,11 +23,12 @@
 
 	type Item = { label: string; href: string };
 	// Nav labels stay in brand English across locales by design.
+	// Club Community is shelved — unlinked from nav, page left in place in
+	// case it's revived later.
 	const NAV: Item[] = [
 		{ label: 'Home', href: '/' },
 		{ label: 'About', href: '/about' },
-		{ label: 'Car Rental', href: '/rental' },
-		{ label: 'Club Community', href: '/community' }
+		{ label: 'Car Rental', href: '/rental' }
 	];
 
 	function close() {
@@ -102,12 +104,16 @@
 				</div>
 			{/if}
 		</div>
-		<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm">{t(L, 'common.reserveCta')}</a>
+		{#if RESERVATIONS_OPEN}
+			<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm">{t(L, 'common.reserveCta')}</a>
+		{/if}
 	</nav>
 
 	<!-- Mobile nav: hamburger only. Desktop hides this entire group. -->
 	<nav class="SiteHeader__nav SiteHeader__nav--mobile" aria-label="Primary">
-		<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm">{t(L, 'common.reserveCta')}</a>
+		{#if RESERVATIONS_OPEN}
+			<a href={l(L, '/reserve')} class="btn-outline btn-outline--sm">{t(L, 'common.reserveCta')}</a>
+		{/if}
 
 		<button
 			type="button"
@@ -162,7 +168,9 @@
 				{/each}
 			</ul>
 
-			<a href={l(L, '/reserve')} class="btn-outline" onclick={close}>{t(L, 'common.reserveCta')}</a>
+			{#if RESERVATIONS_OPEN}
+				<a href={l(L, '/reserve')} class="btn-outline" onclick={close}>{t(L, 'common.reserveCta')}</a>
+			{/if}
 		</aside>
 	</div>
 {/if}
